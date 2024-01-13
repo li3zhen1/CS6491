@@ -33,7 +33,7 @@ class Color {
   }
 
   color asValue() {
-    return color(r*255, g*255, b*255);
+    return color(255*r, 255*g, 255*b);
   }
 }
 
@@ -55,6 +55,14 @@ class Surface {
         this._color = _color;
         this.vertices = new ArrayList<PVector>();
     }
+
+    //static PVector getNormalOfTriangle(PVector vertex1, PVector vertex2, PVector vertex3) {
+    //    var edge1 = PVector.sub(vertex2, vertex1);
+    //    var edge2 = PVector.sub(vertex3, vertex1);
+    //    var normal = edge1.cross(edge2);
+    //    normal.normalize();
+    //    return normal;
+    //}
 }
 
 class Tuple<T1, T2> {
@@ -83,35 +91,31 @@ class Ray {
     }
 
     public Tuple<PVector,PVector> intersect(Surface surface) {
-
-        Tuple<PVector,PVector> result = null;
-
+        PVector closestPoint = null; //new PVector(0.0, 0.0, -Float.MAX_VALUE);
+        PVector normalOfThatPlane = 
         for (int i = 0; i < surface.vertices.size() / 3; i++) {
-            var intersection = _intersect(surface, i * 3);
+            var point = _intersect(surface, i * 3).first;
             
-            if (intersection != null) {
+            if (point != null) {
                 if (debug_flag) {
-                    println("point: " + intersection.first);
+                    println("point: " + point);
                 }
-                if (result == null) {
-                    result = intersection;
+                if (closestPoint == null) {
+                    closestPoint = point;
                 }
                 else {
-                    var distance = PVector.dist(origin, intersection.first);
-                    var closestDistance = PVector.dist(origin, result.first);
+                    var distance = PVector.dist(origin, point);
+                    var closestDistance = PVector.dist(origin, closestPoint);
                     if (distance < closestDistance) {
-                        result = intersection;
+                        closestPoint = point;
                     }
                 }
             }
         }
-        return result;
+        return closestPoint;
     }
 
     private Tuple<PVector,PVector> _intersect(Surface surface, int startIndex) {
-
-        // returns (point, normal)
-
         var vertices = surface.vertices;
         var vertex1 = vertices.get(startIndex + 0);
         var vertex2 = vertices.get(startIndex + 1);
@@ -146,9 +150,7 @@ class Ray {
 
         if (t > 0.00001) {
             var point = PVector.add(origin, PVector.mult(direction, t));
-            var normal = edge1.cross(edge2);
-            normal.normalize();
-            return new Tuple<PVector,PVector>(point, normal);
+            return point;
         }
         else {
             return null;
@@ -329,45 +331,25 @@ void draw_scene() {
 
       var ray = new Ray(eye, direction);
 
-      Tuple<PVector, PVector> closestIntersection = null;
+      PVector closestIntersection = null;
+      color c = scene.background.asValue();
 
       for (int i = 0; i < scene.surfaces.size(); i++) {
           var surface = scene.surfaces.get(i);
-          var intersection = ray.intersect(surface);
+          var point = ray.intersect(surface);
           
-          if (intersection != null) {
-              if (closestIntersection == null || closestIntersection.first.z < intersection.first.z) {
-                  closestIntersection = intersection;
+          if (point != null) {
+              if (closestIntersection == null) {
+                  closestIntersection = point;
+                  c = surface._color.asValue();
+              }
+              else if (closestIntersection.z < point.z) {
+                  closestIntersection = point;
+                  c = surface._color.asValue();
               }
           }
       }
-      if (closestIntersection == null) {
-            set(x, y, scene.background.asValue());
-        }
-        else {
-            var point = closestIntersection.first;
-            var normal = closestIntersection.second;
-    
-            var _color = new Color(0, 0, 0);
-    
-            for (int i = 0; i < scene.lights.size(); i++) {
-                var light = scene.lights.get(i);
-                var lightDirection = PVector.sub(light.position, point);
-                lightDirection.normalize();
-
-                    var diffuse = PVector.dot(normal, lightDirection);
-                    println(diffuse);
-                    if (diffuse < 0) {
-                        diffuse = 0;
-                    }
-                    _color.r += diffuse * light._color.r;
-                    _color.g += diffuse * light._color.g;
-                    _color.b += diffuse * light._color.b;
-                
-            }
-    
-            set(x, y, _color.asValue());
-      }
+      set(x, y, c);
       
     }
   }
