@@ -96,7 +96,7 @@ void interpreter(String file) {
             var vertex = currentTransform.applyTo(new PVector(x, y, z));
             var surface = scene.surfaces.get(scene.surfaces.size() - 1);
 
-            surface.vertices.add(vertex);
+            surface.mesh.addVertex(vertex);
         }
     }
     else if (token[0].equals("end")) {

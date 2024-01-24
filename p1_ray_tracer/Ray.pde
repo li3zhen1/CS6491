@@ -19,8 +19,10 @@ class Ray {
 
         Tuple<PVector, PVector> result = null;
 
-        for (int i = 0; i < surface.vertices.size() / 3; i++) {
-            var intersection = _intersect(surface, i * 3);
+        int currentTriangleIndex = 0;
+
+        for (int i = 0; i < surface.mesh.triangleCount(); i++) {
+            var intersection = _intersect(surface, i);
 
             if (intersection != null) {
                 if (debug_flag) {
@@ -28,11 +30,13 @@ class Ray {
                 }
                 if (result == null) {
                     result = intersection;
+                    currentTriangleIndex = i;
                 } else {
                     var distance = PVector.dist(origin, intersection.first);
                     var closestDistance = PVector.dist(origin, result.first);
                     if (distance < closestDistance) {
                         result = intersection;
+                        currentTriangleIndex = i;
                     }
                 }
             }
@@ -52,8 +56,10 @@ class Ray {
 
         Tuple<PVector, PVector> result = null;
 
-        for (int i = 0; i < surface.vertices.size() / 3; i++) {
-            var intersection = _intersect(surface, i * 3);
+        int currentTriangleIndex = 0;
+
+        for (int i = 0; i < surface.mesh.triangleCount(); i++) {
+            var intersection = _intersect(surface, i);
 
             if (intersection != null) {
                 if (debug_flag) {
@@ -61,11 +67,13 @@ class Ray {
                 }
                 if (result == null) {
                     result = intersection;
+                    currentTriangleIndex = i;
                 } else {
                     var distance = PVector.dist(origin, intersection.first);
                     var closestDistance = PVector.dist(origin, result.first);
                     if (distance < closestDistance) {
                         result = intersection;
+                        currentTriangleIndex = i;
                     }
                 }
             }
@@ -113,11 +121,10 @@ class Ray {
     }
 
     // returns (point, normal)
-    private Tuple<PVector, PVector> _intersect(Surface surface, int startIndex) {
-
-        var v1 = surface.getVertex(startIndex);
-        var v2 = surface.getVertex(startIndex + 1);
-        var v3 = surface.getVertex(startIndex + 2);
+    private Tuple<PVector, PVector> _intersect(Surface surface, int triangleIndex) {
+        var v1 = surface.mesh.getVertex(triangleIndex*3 + 0);
+        var v2 = surface.mesh.getVertex(triangleIndex*3 + 1);
+        var v3 = surface.mesh.getVertex(triangleIndex*3 + 2);
         var e1 = PVector.sub(v2, v1);
         var e2 = PVector.sub(v3, v1);
 

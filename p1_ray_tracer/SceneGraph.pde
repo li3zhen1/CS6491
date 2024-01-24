@@ -92,11 +92,6 @@ class SceneGraph {
         for (int i = 0; i < surfaces.size(); i++) {
             Surface surface = surfaces.get(i);
             println("    surface: " + surface._color.r + " " + surface._color.g + " " + surface._color.b);
-            println("      vertices: " + surface.vertices.size());
-            for (int j = 0; j < surface.vertices.size(); j++) {
-                PVector vertex = surface.vertices.get(j);
-                println("        vertex: " + vertex.x + " " + vertex.y + " " + vertex.z);
-            }
         }
     }
 
