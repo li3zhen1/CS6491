@@ -15,11 +15,17 @@ class SceneGraph {
         this.transform.add(identityMat4x4());
     }
 
-    void push(Mat4x4 mat) {
-        this.transform.add(mat);
+    void push() {
+        this.transform.add(
+            getCurrentTransformCopy()
+        );
     }
 
-    private Mat4x4 getCurrentTransform() {
+    Mat4x4 getCurrentTransformRef() {
+        return (this.transform.get(this.transform.size() - 1));
+    }
+
+    Mat4x4 getCurrentTransformCopy() {
         return (this.transform.get(this.transform.size() - 1)).copy();
     }
 
@@ -29,17 +35,21 @@ class SceneGraph {
 
     void translate(float x, float y, float z) {
         Mat4x4 mat = translateMat4x4(x, y, z);
+        mat.dump();
+        getCurrentTransformRef().dump();
         this.transform.set(
             this.transform.size() - 1, 
-            getCurrentTransform().dot(mat)
+            getCurrentTransformRef().dot(mat)
         );
+        print("translate: " + x + " " + y + " " + z + " -> ");
+        getCurrentTransformRef().dot(mat).dump();
     }
 
     void scale(float x, float y, float z) {
         Mat4x4 mat = scaleMat4x4(x, y, z);
         this.transform.set(
             this.transform.size() - 1, 
-            getCurrentTransform().dot(mat)
+            getCurrentTransformRef().dot(mat)
         );
     }
 
@@ -47,7 +57,7 @@ class SceneGraph {
         Mat4x4 mat = rotateXMat4x4(angle);
         this.transform.set(
             this.transform.size() - 1, 
-            getCurrentTransform().dot(mat)
+            getCurrentTransformRef().dot(mat)
         );
     }
 
@@ -55,7 +65,7 @@ class SceneGraph {
         Mat4x4 mat = rotateYMat4x4(angle);
         this.transform.set(
             this.transform.size() - 1, 
-            getCurrentTransform().dot(mat)
+            getCurrentTransformRef().dot(mat)
         );
     }
 
@@ -63,7 +73,7 @@ class SceneGraph {
         Mat4x4 mat = rotateZMat4x4(angle);
         this.transform.set(
             this.transform.size() - 1, 
-            getCurrentTransform().dot(mat)
+            getCurrentTransformRef().dot(mat)
         );
     }
 

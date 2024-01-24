@@ -84,8 +84,16 @@ void interpreter(String file) {
             float y = float(token[2]);
             float z = float(token[3]);
 
-            var vertex = new PVector(x, y, z);
+            // var vertex = new PVector(x, y, z);
 
+            
+            var currentTransform = scene.getCurrentTransformRef();
+
+            if (debug_flag) {
+                currentTransform.dump();
+            }
+
+            var vertex = currentTransform.applyTo(new PVector(x, y, z));
             var surface = scene.surfaces.get(scene.surfaces.size() - 1);
 
             surface.vertices.add(vertex);
@@ -107,6 +115,44 @@ void interpreter(String file) {
     }
     else if (token[0].equals("read")) {
         interpreter (token[1]);
+    }
+    else if (token[0].equals("translate")) {
+        float x = float(token[1]);
+        float y = float(token[2]);
+        float z = float(token[3]);
+
+        scene.translate(x, y, z);
+    }
+    else if (token[0].equals("scale")) {
+        float x = float(token[1]);
+        float y = float(token[2]);
+        float z = float(token[3]);
+        
+        scene.scale(x, y, z);
+    }
+    else if (token[0].equals("rotate")) {
+        float deg = float(token[1]);
+        float rad = deg * PI / 180.0;
+        var x = int(token[2]);
+        var y = int(token[3]);
+        var z = int(token[4]);
+
+        if (x == 1) {
+            scene.rotateX(rad);
+        }
+        else if (y == 1) {
+            scene.rotateY(rad);
+        }
+        else if (z == 1) {
+            scene.rotateZ(rad);
+        }
+        
+    }
+    else if (token[0].equals("push")) {
+        scene.push();
+    }
+    else if (token[0].equals("pop")) {
+        scene.pop();
     }
     else if (token[0].equals("#")) {
       // comment (ignore)
@@ -132,7 +178,6 @@ void draw_scene() {
     float fovRadians = scene.fov * PI / 180.0;
 
     println("fovRadians: " + fovRadians);
-
 
   for(int y = 0; y < height; y++) {
     for(int x = 0; x < width; x++) {
@@ -163,7 +208,6 @@ void draw_scene() {
       for (int i = 0; i < scene.surfaces.size(); i++) {
           var surface = scene.surfaces.get(i);
           var intersection = ray.intersect(surface);
-
           if (intersection != null) {
               if (closestIntersection == null || closestIntersection.position.z < intersection.position.z) {
                   closestIntersection = intersection;
