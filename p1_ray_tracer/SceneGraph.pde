@@ -1,4 +1,4 @@
-class SceneGraph {
+final class SceneGraph {
 
     float fov;
     Color background;
@@ -35,14 +35,10 @@ class SceneGraph {
 
     void translate(float x, float y, float z) {
         Mat4x4 mat = translateMat4x4(x, y, z);
-        mat.dump();
-        getCurrentTransformRef().dump();
         this.transform.set(
             this.transform.size() - 1, 
             getCurrentTransformRef().dot(mat)
         );
-        print("translate: " + x + " " + y + " " + z + " -> ");
-        getCurrentTransformRef().dot(mat).dump();
     }
 
     void scale(float x, float y, float z) {

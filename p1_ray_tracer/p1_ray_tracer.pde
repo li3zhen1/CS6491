@@ -3,7 +3,7 @@
 // The most important part of the code is the interpreter, which will help
 // you parse the scene description (.cli) files.
 
-boolean debug_flag = true;
+boolean debug_flag = false;
 
 ParsingState pState = ParsingState.GLOBAL;
 SceneGraph scene = new SceneGraph();
@@ -16,8 +16,29 @@ void setup() {
 
 void keyPressed() {
   reset_scene();
-
-  interpreter("s" + key + ".cli");
+  
+  switch(key) {
+    case '1':
+      interpreter("s1.cli");
+      break;
+    case '2':
+      interpreter("s2.cli");
+      break;
+    case '3':
+      interpreter("s3.cli");
+      break;
+    case '4':
+      interpreter("s4.cli");
+      break;
+    case '5':
+      interpreter("s5.cli");
+      break;
+    case '6':
+      interpreter("s6.cli");
+      break;
+    default:
+      break;
+  }
 }
 
 
@@ -109,8 +130,6 @@ void interpreter(String file) {
             }
     }
     else if (token[0].equals("render")) {
-      if (debug_flag)
-        scene.dump();
       draw_scene();   // this is where you should perform the scene rendering
     }
     else if (token[0].equals("read")) {
@@ -170,14 +189,13 @@ void reset_scene() {
 
 // This is where you should put your code for creating eye rays and tracing them.
 void draw_scene() {
+    println("\n\n============ Rendering ........ ============ ");
     PVector eye = new PVector(0, 0, 0);
 
     float widthFloat = (float)width;
     float heightFloat = (float)height;
 
     float fovRadians = scene.fov * PI / 180.0;
-
-    println("fovRadians: " + fovRadians);
 
   for(int y = 0; y < height; y++) {
     for(int x = 0; x < width; x++) {
@@ -218,27 +236,12 @@ void draw_scene() {
           set(x, y, scene.background.asValue());
       }
       else {
-        
-        //   var _color = new Color(0, 0, 0);
-        //   for (int i = 0; i < scene.lights.size(); i++) {
-        //       var light = scene.lights.get(i);
-        //       var lightDirection = PVector.sub(light.position, closestIntersection.position);
-        //       lightDirection.normalize();
-
-        //       var diffuse = PVector.dot(closestIntersection.normal, lightDirection);
-
-        //       if (diffuse < 0) {
-        //           diffuse = 0;
-        //       }
-        //       _color.r += diffuse * light._color.r * closestIntersection._color.r;
-        //       _color.g += diffuse * light._color.g * closestIntersection._color.g;
-        //       _color.b += diffuse * light._color.b * closestIntersection._color.b;
-        //   }
           set(x, y, closestIntersection._color.asValue());
       }
 
     }
   }
+  println("============ Rendering finished ============ ");
 }
 
 // prints mouse location clicks, for help in debugging

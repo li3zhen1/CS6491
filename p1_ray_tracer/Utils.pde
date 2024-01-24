@@ -1,5 +1,5 @@
 
-class Tuple<T1, T2> {
+final class Tuple<T1, T2> {
     T1 first;
     T2 second;
 
@@ -9,7 +9,7 @@ class Tuple<T1, T2> {
     }
 }
 
-class Triple<T1, T2, T3> {
+final class Triple<T1, T2, T3> {
     T1 first;
     T2 second;
     T3 third;
@@ -21,7 +21,7 @@ class Triple<T1, T2, T3> {
     }
 }
 
-class Optional<T> {
+final class Optional<T> {
     T value;
 
     Optional(T value) {

@@ -1,4 +1,4 @@
-class Light {
+final class Light {
     PVector position;
     Color _color;
 

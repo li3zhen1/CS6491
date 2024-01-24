@@ -1,4 +1,4 @@
-class Color {
+final class Color {
     float r;
     float g;
     float b;

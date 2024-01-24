@@ -1,4 +1,4 @@
-class Mesh {
+final class Mesh {
     ArrayList<PVector> vertices;
 
     Mesh(ArrayList<PVector> vertices) {

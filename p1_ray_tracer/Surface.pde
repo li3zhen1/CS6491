@@ -1,4 +1,4 @@
-class Surface {
+final class Surface {
     Color _color;
     Mesh mesh;
     // ArrayList<PVector> vertices;

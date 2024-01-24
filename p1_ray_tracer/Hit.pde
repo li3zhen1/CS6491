@@ -1,4 +1,4 @@
-class Hit {
+final class Hit {
     PVector position;
     PVector normal;
     Color _color;

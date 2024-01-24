@@ -1,5 +1,6 @@
+boolean skip_same_surface = false;
 
-class Ray {
+final class Ray {
     PVector origin;
     PVector direction;
 
@@ -15,19 +16,20 @@ class Ray {
     }
 
 
-    public Hit intersect(Surface surface) {
+    // Check if the ray intersects with the surface, and return the hit point
+    public Hit intersect(Surface surface, int excludingTriangleIndex) {
 
         Tuple<PVector, PVector> result = null;
 
         int currentTriangleIndex = 0;
 
         for (int i = 0; i < surface.mesh.triangleCount(); i++) {
+            if (i == excludingTriangleIndex) {
+                continue;
+            }
             var intersection = _intersect(surface, i);
 
             if (intersection != null) {
-                if (debug_flag) {
-                    println("point: " + intersection.first);
-                }
                 if (result == null) {
                     result = intersection;
                     currentTriangleIndex = i;
@@ -49,6 +51,8 @@ class Ray {
     }
     
 
+    // Check if the ray intersects with the surface, and return the hit point
+    // checks shadow intersection
     public Hit intersectWithShadow(Surface surface, SceneGraph sceneGraphRef) {
 
         var lights = sceneGraphRef.lights;
@@ -62,9 +66,6 @@ class Ray {
             var intersection = _intersect(surface, i);
 
             if (intersection != null) {
-                if (debug_flag) {
-                    println("point: " + intersection.first);
-                }
                 if (result == null) {
                     result = intersection;
                     currentTriangleIndex = i;
@@ -86,18 +87,25 @@ class Ray {
 
         var _color = new Color(0, 0, 0);
 
-        // boolean hasLight = false;
-
         for (var light : lights) {
             var shadowRay = new Ray(hit.position, PVector.sub(light.position, hit.position));
             
             boolean hasObstacle = false;
 
             for (var surface2 : surfaces) {
+                Hit _hit2 = null;
                 if (surface2 == surface) {
-                    continue;
+                    if (skip_same_surface) {
+                        continue;
+                    }
+                    else {
+                        _hit2 = shadowRay.intersect(surface2, currentTriangleIndex);
+                    }
                 }
-                var _hit2 = shadowRay.intersect(surface2);
+                else { 
+                    _hit2 = shadowRay.intersect(surface2, -1);
+                }
+    
                 if (_hit2 != null && _hit2.position.dist(hit.position) < light.position.dist(hit.position)) {
                     hasObstacle = true;
                     break;
@@ -121,7 +129,7 @@ class Ray {
     }
 
 
-    // returns (point, normal)
+
     private Tuple<PVector, PVector> _intersect(Surface surface, int triangleIndex) {
         var tri = surface.mesh.getTriangleCopy(triangleIndex);
         var v1 = tri[0];
@@ -133,7 +141,7 @@ class Ray {
         var h = direction.cross(e2);
         var a = e1.dot(h);
 
-        if (a > -1e-6 && a < 1e-6) {
+        if (a > -1e-5 && a < 1e-5) {
             return null;
         }
 

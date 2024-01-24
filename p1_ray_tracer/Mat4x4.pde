@@ -1,5 +1,5 @@
 
-class Mat4x4 {
+final class Mat4x4 {
     float[][] mat = new float[4][4];
 
     public void dump() {
