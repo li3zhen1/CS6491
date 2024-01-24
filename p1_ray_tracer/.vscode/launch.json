@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "shell",
+            "preLaunchTask": "Run in Processing",
+            "request": "launch",
+            "name": "Launch Processing Sketch",
+        }
+    ]   
+}

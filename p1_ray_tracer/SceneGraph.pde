@@ -4,10 +4,7 @@ class SceneGraph {
     Color background;
     ArrayList<Light> lights;
     ArrayList<Surface> surfaces;
-
-    ArrayList<Mat4x4> transformation = new ArrayList<Mat4x4>();
-
-
+    ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
 
     SceneGraph() {
         this.fov = 0;
@@ -15,8 +12,61 @@ class SceneGraph {
         this.lights = new ArrayList<Light>();
         this.surfaces = new ArrayList<Surface>();
 
-        this.transformation.add(identityMat4x4());
+        this.transform.add(identityMat4x4());
     }
+
+    void push(Mat4x4 mat) {
+        this.transform.add(mat);
+    }
+
+    private Mat4x4 getCurrentTransform() {
+        return (this.transform.get(this.transform.size() - 1)).copy();
+    }
+
+    void pop() {
+        this.transform.remove(this.transform.size() - 1);
+    }
+
+    void translate(float x, float y, float z) {
+        Mat4x4 mat = translateMat4x4(x, y, z);
+        this.transform.set(
+            this.transform.size() - 1, 
+            getCurrentTransform().dot(mat)
+        );
+    }
+
+    void scale(float x, float y, float z) {
+        Mat4x4 mat = scaleMat4x4(x, y, z);
+        this.transform.set(
+            this.transform.size() - 1, 
+            getCurrentTransform().dot(mat)
+        );
+    }
+
+    void rotateX(float angle) {
+        Mat4x4 mat = rotateXMat4x4(angle);
+        this.transform.set(
+            this.transform.size() - 1, 
+            getCurrentTransform().dot(mat)
+        );
+    }
+
+    void rotateY(float angle) {
+        Mat4x4 mat = rotateYMat4x4(angle);
+        this.transform.set(
+            this.transform.size() - 1, 
+            getCurrentTransform().dot(mat)
+        );
+    }
+
+    void rotateZ(float angle) {
+        Mat4x4 mat = rotateZMat4x4(angle);
+        this.transform.set(
+            this.transform.size() - 1, 
+            getCurrentTransform().dot(mat)
+        );
+    }
+
 
 
     void dump() {

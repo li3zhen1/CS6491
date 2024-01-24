@@ -1,0 +1,9 @@
+{
+    "version": "2.0.0",
+    "tasks": [{
+        "label": "Run in Processing",
+        "command": "processing-java",
+        "args": ["--sketch=$(pwd)", "--run"],
+        "type": "shell",
+    }]
+}

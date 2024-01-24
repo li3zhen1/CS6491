@@ -9,6 +9,19 @@ class Mat4x4 {
     }
 
 
+    Mat4x4 copy() {
+        float[][] newMat = new float[4][4];
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; i < 4; i++) {
+                newMat[i][j] = this.mat[i][j];
+            }
+        }
+
+        return new Mat4x4(newMat);
+    }
+
+
     Mat4x4 dot(Mat4x4 other) {
         float[][] newMat = new float[4][4];
 
@@ -70,7 +83,7 @@ class Mat4x4 {
 }
 
 
-    Mat4x4 translationMat4x4(float x, float y, float z) {
+    Mat4x4 translateMat4x4(float x, float y, float z) {
         return new Mat4x4(
             new float[][] {
                 {1, 0, 0, x},
