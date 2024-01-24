@@ -207,7 +207,7 @@ void draw_scene() {
 
       for (int i = 0; i < scene.surfaces.size(); i++) {
           var surface = scene.surfaces.get(i);
-          var intersection = ray.intersect(surface);
+          var intersection = ray.intersectWithShadow(surface, scene);
           if (intersection != null) {
               if (closestIntersection == null || closestIntersection.position.z < intersection.position.z) {
                   closestIntersection = intersection;
@@ -219,23 +219,22 @@ void draw_scene() {
       }
       else {
         
-          var _color = new Color(0, 0, 0);
-          for (int i = 0; i < scene.lights.size(); i++) {
-              var light = scene.lights.get(i);
-              var lightDirection = PVector.sub(light.position, closestIntersection.position);
-              lightDirection.normalize();
+        //   var _color = new Color(0, 0, 0);
+        //   for (int i = 0; i < scene.lights.size(); i++) {
+        //       var light = scene.lights.get(i);
+        //       var lightDirection = PVector.sub(light.position, closestIntersection.position);
+        //       lightDirection.normalize();
 
-              var diffuse = PVector.dot(closestIntersection.normal, lightDirection);
+        //       var diffuse = PVector.dot(closestIntersection.normal, lightDirection);
 
-
-              if (diffuse < 0) {
-                  diffuse = 0;
-              }
-              _color.r += diffuse * light._color.r * closestIntersection._color.r;
-              _color.g += diffuse * light._color.g * closestIntersection._color.g;
-              _color.b += diffuse * light._color.b * closestIntersection._color.b;
-          }
-          set(x, y, _color.asValue());
+        //       if (diffuse < 0) {
+        //           diffuse = 0;
+        //       }
+        //       _color.r += diffuse * light._color.r * closestIntersection._color.r;
+        //       _color.g += diffuse * light._color.g * closestIntersection._color.g;
+        //       _color.b += diffuse * light._color.b * closestIntersection._color.b;
+        //   }
+          set(x, y, closestIntersection._color.asValue());
       }
 
     }

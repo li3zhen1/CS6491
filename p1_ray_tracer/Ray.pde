@@ -40,9 +40,77 @@ class Ray {
         if (result == null) {
             return null;
         }
+
         return new Hit(result.first, result.second, surface._color);
     }
+    
 
+    public Hit intersectWithShadow(Surface surface, SceneGraph sceneGraphRef) {
+
+        var lights = sceneGraphRef.lights;
+        var surfaces = sceneGraphRef.surfaces;
+
+        Tuple<PVector, PVector> result = null;
+
+        for (int i = 0; i < surface.vertices.size() / 3; i++) {
+            var intersection = _intersect(surface, i * 3);
+
+            if (intersection != null) {
+                if (debug_flag) {
+                    println("point: " + intersection.first);
+                }
+                if (result == null) {
+                    result = intersection;
+                } else {
+                    var distance = PVector.dist(origin, intersection.first);
+                    var closestDistance = PVector.dist(origin, result.first);
+                    if (distance < closestDistance) {
+                        result = intersection;
+                    }
+                }
+            }
+        }
+        if (result == null) {
+            return null;
+        }
+
+        var hit = new Hit(result.first, result.second, surface._color);
+
+        var _color = new Color(0, 0, 0);
+
+        // boolean hasLight = false;
+
+        for (var light : lights) {
+            var shadowRay = new Ray(hit.position, PVector.sub(light.position, hit.position));
+            
+            boolean hasObstacle = false;
+
+            for (var surface2 : surfaces) {
+                if (surface2 == surface) {
+                    continue;
+                }
+                var _hit2 = shadowRay.intersect(surface2);
+                if (_hit2 != null) {
+                    hasObstacle = true;
+                    break;
+                }
+            }
+            
+            var lightDirection = PVector.sub(light.position, hit.position);
+            lightDirection.normalize();
+
+            var diffuse = hit.normal.dot(lightDirection);
+
+            if (diffuse > 0 && !hasObstacle) {
+                // hasLight = true;
+                _color.r = _color.r + diffuse * light._color.r * hit._color.r;
+                _color.g = _color.g + diffuse * light._color.g * hit._color.g;
+                _color.b = _color.b + diffuse * light._color.b * hit._color.b;
+            }
+        }
+        
+        return new Hit(hit.position, hit.normal, _color);
+    }
 
     // returns (point, normal)
     private Tuple<PVector, PVector> _intersect(Surface surface, int startIndex) {

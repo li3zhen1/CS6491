@@ -47,7 +47,6 @@ class Mat4x4 {
 
         float[][] newMat = new float[4][4];
 
-
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 float sum = 0;
@@ -57,7 +56,6 @@ class Mat4x4 {
                 newMat[i][j] = sum;
             }
         }
-
 
         return new Mat4x4(newMat);
     }
