@@ -15,7 +15,7 @@ class SceneGraph {
         this.lights = new ArrayList<Light>();
         this.surfaces = new ArrayList<Surface>();
 
-        this.transformation.add(Mat4x4.identity());
+        this.transformation.add(identityMat4x4());
     }
 
 
