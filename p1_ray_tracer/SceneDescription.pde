@@ -1,20 +1,26 @@
-class SceneDescription {
+class SceneGraph {
+
     float fov;
     Color background;
     ArrayList<Light> lights;
     ArrayList<Surface> surfaces;
 
+    ArrayList<Mat4x4> transformation = new ArrayList<Mat4x4>();
 
-    SceneDescription() {
+
+
+    SceneGraph() {
         this.fov = 0;
         this.background = new Color(0, 0, 0);
         this.lights = new ArrayList<Light>();
         this.surfaces = new ArrayList<Surface>();
+
+        this.transformation.add(Mat4x4.identity());
     }
 
 
     void dump() {
-        println("SceneDescription");
+        println("SceneGraph");
         println("  fov: " + fov);
         println("  background: " + background.r + " " + background.g + " " + background.b);
         println("  lights: " + lights.size());

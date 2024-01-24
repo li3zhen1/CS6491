@@ -6,7 +6,7 @@
 boolean debug_flag = true;
 
 ParsingState pState = ParsingState.GLOBAL;
-SceneDescription scene = new SceneDescription();
+SceneGraph scene = new SceneGraph();
 
 void setup() {
   size (300, 300);
@@ -16,12 +16,8 @@ void setup() {
 
 void keyPressed() {
   reset_scene();
-  switch(key) {
-    case '1': interpreter("s1.cli"); break;
-    case '2': interpreter("s2.cli"); break;
-    case '3': interpreter("s3.cli"); break;
-    case '4': interpreter("s4.cli"); break;
-  }
+
+  interpreter("s" + key + ".cli");
 }
 
 
@@ -109,6 +105,9 @@ void interpreter(String file) {
         scene.dump();
       draw_scene();   // this is where you should perform the scene rendering
     }
+    else if (token[0].equals("read")) {
+        interpreter (token[1]);
+    }
     else if (token[0].equals("#")) {
       // comment (ignore)
     }
@@ -119,7 +118,7 @@ void interpreter(String file) {
 }
 
 void reset_scene() {
-    scene = new SceneDescription();
+    scene = new SceneGraph();
     pState = ParsingState.GLOBAL;
 }
 
