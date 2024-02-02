@@ -4,13 +4,33 @@ final class SceneGraph {
     Color background;
     ArrayList<Light> lights;
     ArrayList<Surface> surfaces;
+
+    HashMap<String, IRenderableObject> objectLibrary;
+    ArrayList<IRenderableObject> secneObjectInstances;
+
     ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
+
+    void moveLatestObjectToLibraryWithName(String name) {
+        IRenderableObject object = secneObjectInstances.get(secneObjectInstances.size() - 1);
+        objectLibrary.put(name, object);
+        secneObjectInstances.remove(secneObjectInstances.size() - 1);
+    }
+
+    void instantiate(String name) {
+        IRenderableObject object = objectLibrary.get(name);
+        secneObjectInstances.add(object);
+    }
+
+
 
     SceneGraph() {
         this.fov = 0;
         this.background = new Color(0, 0, 0);
         this.lights = new ArrayList<Light>();
         this.surfaces = new ArrayList<Surface>();
+
+        this.objectLibrary = new HashMap<String, IRenderableObject>();
+        this.secneObjectInstances = new ArrayList<IRenderableObject>();
 
         this.transform.add(identityMat4x4());
     }

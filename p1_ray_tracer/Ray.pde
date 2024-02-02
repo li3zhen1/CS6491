@@ -4,9 +4,15 @@ final class Ray {
     PVector origin;
     PVector direction;
 
+    // float mint;
+    // float maxt;
+
     Ray(PVector origin, PVector direction) {
         this.origin = origin;
         this.direction = direction;
+
+        // this.mint = 0.0f;
+        // this.maxt = Float.MAX_VALUE;
     }
 
     void dump() {
@@ -173,5 +179,13 @@ final class Ray {
         } else {
             return null;
         }
+    }
+
+
+
+
+
+    PVector getPosition(float t) {
+        return PVector.add(origin, PVector.mult(direction, t));
     }
 }
