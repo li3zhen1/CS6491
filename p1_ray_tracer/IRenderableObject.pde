@@ -116,4 +116,4 @@ final class InstancedObject<T extends IRenderableObject> implements IRenderableO
 }
 
 
-final static float EPSILON = 1e-5f;
+static float EPSILON = 1e-5f;

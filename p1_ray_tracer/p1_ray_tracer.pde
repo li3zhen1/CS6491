@@ -225,21 +225,20 @@ void draw_scene() {
 
     float widthFloat = (float) width;
     float heightFloat = (float) height;
+    float halfWidth = widthFloat / 2.0;
+    float halfHeight = heightFloat / 2.0;
 
     float fovRadians = scene.fov * PI / 180.0;
     float fovTan = tan(fovRadians / 2.0);
 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-
-            
-
             // Maybe set debug flag true for ONE pixel.
             // Have your routines (like ray/triangle intersection)
             // print information when this flag is set.
             debug_flag = false;
-            if (x == 80 && y == 81)
-                debug_flag = true;
+            // if (x == 80 && y == 81)
+            //     debug_flag = true;
             // if (x == 112 && y == 112)
             //     debug_flag = true;
             // if (x == 148 && y == 60)
@@ -252,29 +251,23 @@ void draw_scene() {
             float yFloat = (float) y + 0.5;
 
 
-            float deltaScreenX = (xFloat - widthFloat / 2.0) / (widthFloat / 2.0) * fovTan;
-            float deltaScreenY = (heightFloat / 2.0 - yFloat) / (heightFloat / 2.0) * fovTan;
+            float deltaScreenX = (xFloat - halfWidth) / halfWidth * fovTan;
+            float deltaScreenY = (halfHeight - yFloat) / halfHeight * fovTan;
             float deltaScreenZ = -1.0;
 
             var direction = new PVector(deltaScreenX, deltaScreenY, deltaScreenZ);
 
             var ray = new Ray(eye, direction);
 
-            // ray.dump();
-            // ray.mutatingTransformedBy(transform);
-            // print("->");
-            // ray.dump();
-            // print("\n");
-
-
             Hit closestIntersection = null;
 
             for (int i = 0; i < scene.secneObjectInstances.size(); i++) {
-                var object = scene.secneObjectInstances.get(i);
-                var intersection = object.getIntersection(
-                    ray, 
-                    scene
-                );
+                var intersection = scene
+                    .secneObjectInstances.get(i)
+                    .getIntersection(
+                        ray, 
+                        scene
+                    );
                 if (intersection != null) {
                     if (closestIntersection == null || closestIntersection.position.z < intersection.position.z) {
                         closestIntersection = intersection;
@@ -287,27 +280,13 @@ void draw_scene() {
                 set(x, y, closestIntersection._color.asValue());
             }
 
-            // for (int i = 0; i < scene.surfaces.size(); i++) {
-            //     var surface = scene.surfaces.get(i);
-            //     var intersection = ray.intersectWithShadow(surface, scene);
-            //     if (intersection != null) {
-            //         if (closestIntersection == null || closestIntersection.position.z < intersection.position.z) {
-            //             closestIntersection = intersection;
-            //         }
-            //     }
-            // }
-            // if (closestIntersection == null) {
-            //     set(x, y, scene.background.asValue());
-            // } else {
-            //     set(x, y, closestIntersection._color.asValue());
-            // }
-
             if (debug_flag) {
                 set(x, y, color(255, 0, 0));
             }
         }
     }
     println("============ Rendering finished ============ ");
+    
     int new_timer = millis();
     int diff = new_timer - timer;
     float seconds = diff / 1000.0;

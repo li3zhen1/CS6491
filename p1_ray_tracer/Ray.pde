@@ -179,9 +179,14 @@ final class Ray {
     }
 
     Ray copyingTransformedBy(PMatrix3D m) {
+        // var newTarget = m.mult(PVector.add(origin, direction), null);
+        var newDirection = new PVector(
+            m.m00 * direction.x + m.m01 * direction.y + m.m02 * direction.z,
+            m.m10 * direction.x + m.m11 * direction.y + m.m12 * direction.z,
+            m.m20 * direction.x + m.m21 * direction.y + m.m22 * direction.z
+        ).normalize();
+
         var newOrigin = m.mult(origin, null);
-        var newTarget = m.mult(PVector.add(origin, direction), null);
-        var newDirection = PVector.sub(newTarget, newOrigin).normalize();
         return new Ray(newOrigin, newDirection);
     } 
 
