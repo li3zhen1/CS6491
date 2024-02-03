@@ -99,9 +99,9 @@ class InstancedObject<T extends IRenderableObject> implements IRenderableObject 
     }
 
     boolean hasIntersection(Ray ray, float mint, float maxt) {
-        var transformedRay = ray.copyingTransformedBy(invertedTransform);
-        
-        return namedObjectRef.hasIntersection(transformedRay, mint, maxt);
+        return namedObjectRef.hasIntersection(
+            ray.copyingTransformedBy(invertedTransform), mint, maxt
+        );
     }
 
 

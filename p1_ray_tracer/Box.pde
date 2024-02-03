@@ -91,14 +91,14 @@ public final class Box implements IRenderableObject {
 
         // boolean hasIntersection = false;
         
-        int hitAxis = 0; // 1 = x, 2 = y, 3 = z
- 
-        
+        int hitAxis = 0; // 1 = x, 2 = y, 3 = z        
         float t0 = 0;
         float t1 = Float.MAX_VALUE;
-
-
         boolean xFlipped = false;
+        boolean yFlipped = false;
+        boolean zFlipped = false;
+
+
         float txMin = (pMin.x - ray.origin.x) / ray.direction.x;
         float txMax = (pMax.x - ray.origin.x) / ray.direction.x;
         if (txMin >= txMax) {
@@ -121,7 +121,6 @@ public final class Box implements IRenderableObject {
 
 
 
-        boolean yFlipped = false;
         float tyMin = (pMin.y - ray.origin.y) / ray.direction.y;
         float tyMax = (pMax.y - ray.origin.y) / ray.direction.y;
         if (tyMin >= tyMax) {
@@ -150,8 +149,6 @@ public final class Box implements IRenderableObject {
         }
 
 
-
-        boolean zFlipped = false;
         float tzMin = (pMin.z - ray.origin.z) / ray.direction.z;
         float tzMax = (pMax.z - ray.origin.z) / ray.direction.z;
         if (tzMin >= tzMax) {
