@@ -19,9 +19,9 @@ final class PartialHit {
 
 
 final class Hit {
-    PVector position;
-    PVector normal;
-    Color _color;
+    final PVector position;
+    final PVector normal;
+    final Color _color;
 
 
     Hit(PVector position, PVector normal, Color _color) {

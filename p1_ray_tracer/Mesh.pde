@@ -33,7 +33,7 @@ final class Mesh implements IPrimitive {
 
 
 
-        PartialHit _getIntersection(Ray ray, SceneGraph sg) {
+    final PartialHit _getIntersection(Ray ray, SceneGraph sg) {
         float closestHitT = Float.MAX_VALUE;
         
         PVector _e1 = new PVector();
@@ -96,7 +96,7 @@ final class Mesh implements IPrimitive {
         }
     }
 
-    boolean hasIntersection(Ray ray, float mint, float maxt) {
+    final boolean hasIntersection(Ray ray, float mint, float maxt) {
         for (int i = 0; i < this.triangleCount(); i++) {
             
             var v1 = this.vertices.get(i * 3);

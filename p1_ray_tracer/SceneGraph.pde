@@ -2,12 +2,12 @@ final class SceneGraph {
 
     float fov;
     Color background;
-    ArrayList<Light> lights;
-    ArrayList<Surface> surfaces;
+    final ArrayList<Light> lights;
+    final ArrayList<Surface> surfaces;
 
-    HashMap<String, Surface> objectLibrary;
+    final HashMap<String, Surface> objectLibrary;
     
-    ArrayList<
+    final ArrayList<
         Surface
     > secneObjectInstances;
 
@@ -22,7 +22,7 @@ final class SceneGraph {
         );
     }
 
-    ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
+    final ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
 
     void moveLatestObjectToLibraryWithName(String name) {
         var object = secneObjectInstances.get(secneObjectInstances.size() - 1);
