@@ -26,21 +26,18 @@ final class SceneGraph {
     ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
 
     void moveLatestObjectToLibraryWithName(String name) {
-        IRenderableObject object = secneObjectInstances.get(secneObjectInstances.size() - 1);
+        var object = secneObjectInstances.get(secneObjectInstances.size() - 1);
         objectLibrary.put(name, object);
         secneObjectInstances.remove(secneObjectInstances.size() - 1);
     }
 
     void instantiate(String name) {
-        IRenderableObject object = objectLibrary.get(name);
+        var object = objectLibrary.get(name);
         secneObjectInstances.add(
-            // new Pair<Mat4x4, IRenderableObject>(
-                // getCurrentTransformCopy(),
             new InstancedObject(
                 object,
                 getCurrentTransformCopy()
             )
-            // )
         );
     }
 

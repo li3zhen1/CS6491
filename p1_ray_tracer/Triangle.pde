@@ -1,42 +1,18 @@
-final class Mesh implements IPrimitive {
-    ArrayList<PVector> vertices;
 
-    Mesh(ArrayList<PVector> vertices) {
-        vertices = new ArrayList<PVector>();
+final class Triangle implements IPrimitive {
+    PVector v1;
+    PVector v2;
+    PVector v3;
+
+    Triangle(PVector v1, PVector v2, PVector v3) {
+        this.v1 = v1;
+        this.v2 = v2;
+        this.v3 = v3;
     }
 
-    Mesh() {
-        vertices = new ArrayList<PVector>();
-    }
-
-    void addVertex(PVector vertex) {
-        vertices.add(vertex);
-    }
-
-    PVector getVertex(int index) {
-        return vertices.get(index);
-    }
-
-    void setVertex(int index, PVector vertex) {
-        vertices.set(index, vertex);
-    }
-
-    int triangleCount() {
-        return vertices.size() / 3;
-    }
-
-    PVector[] getTriangleCopy(int index) {
-        PVector[] triangle = new PVector[3];
-        triangle[0] = vertices.get(index * 3);
-        triangle[1] = vertices.get(index * 3 + 1);
-        triangle[2] = vertices.get(index * 3 + 2);
-        return triangle;
-    }
-    
 
 
-
-        PartialHit _getIntersection(Ray ray, SceneGraph sg) {
+    PartialHit _getIntersection(Ray ray, SceneGraph sg) {
         float closestHitT = Float.MAX_VALUE;
         
         PVector _e1 = new PVector();
@@ -45,11 +21,11 @@ final class Mesh implements IPrimitive {
         var rayDirection = ray.direction;
         var rayOrigin = ray.origin;
         
-        for (int i = 0; i < this.triangleCount(); i++) {
+        // for (int i = 0; i < mesh.triangleCount(); i++) {
             
-            var v1 = this.vertices.get(i * 3);
-            var v2 = this.vertices.get(i * 3 + 1);
-            var v3 = this.vertices.get(i * 3 + 2);
+        //     var v1 = mesh.vertices.get(i * 3);
+        //     var v2 = mesh.vertices.get(i * 3 + 1);
+        //     var v3 = mesh.vertices.get(i * 3 + 2);
             var e1 = 
             PVector.sub(v2, v1);
             var e2 = 
@@ -59,7 +35,7 @@ final class Mesh implements IPrimitive {
             var a = e1.dot(h);
 
             if (a > -EPSILON && a < EPSILON) {
-                continue;
+                return null;
             }
 
             var f = 1.0 / a;
@@ -67,27 +43,21 @@ final class Mesh implements IPrimitive {
             var u = f * s.dot(h);
 
             if (u < 0.0 || u > 1.0) {
-                continue;
+                return null;
             }
 
             var q = s.cross(e1);
             var v = f * PVector.dot(rayDirection, q);
 
             if (v < 0.0 || u + v > 1.0) {
-                continue;
+                return null;
             }
 
             var hitT = f * PVector.dot(e2, q);
 
-            if (hitT < closestHitT) {
-                closestHitT = hitT;
-                _e1 = e1;
-                _e2 = e2;
-            }
-
-        }
+        // }
         
-        if (closestHitT > EPSILON && closestHitT < Float.MAX_VALUE) {
+        if (hitT > EPSILON && hitT < Float.MAX_VALUE) {
             var point = PVector.add(rayOrigin, PVector.mult(rayDirection, closestHitT));
             var normal = _e1.cross(_e2).normalize();
             if (rayDirection.dot(normal) > 0) {
@@ -100,11 +70,11 @@ final class Mesh implements IPrimitive {
     }
 
     boolean hasIntersection(Ray ray, float mint, float maxt) {
-        for (int i = 0; i < this.triangleCount(); i++) {
+        // for (int i = 0; i < mesh.triangleCount(); i++) {
             
-            var v1 = this.vertices.get(i * 3);
-            var v2 = this.vertices.get(i * 3 + 1);
-            var v3 = this.vertices.get(i * 3 + 2);
+            // var v1 = mesh.vertices.get(i * 3);
+            // var v2 = mesh.vertices.get(i * 3 + 1);
+            // var v3 = mesh.vertices.get(i * 3 + 2);
             var e1 = PVector.sub(v2, v1);
             var e2 = PVector.sub(v3, v1);
 
@@ -112,7 +82,7 @@ final class Mesh implements IPrimitive {
             var a = e1.dot(h);
 
             if (a > -EPSILON && a < EPSILON) {
-                continue;
+                return false;
             }
 
             var f = 1.0f / a;
@@ -120,14 +90,14 @@ final class Mesh implements IPrimitive {
             var u = f * s.dot(h);
 
             if (u < 0.0f || u > 1.0f) {
-                continue;
+                return false;
             }
 
             var q = s.cross(e1);
             var v = f * PVector.dot(ray.direction, q);
 
             if (v < 0.0f || u + v > 1.0f) {
-                continue;
+                return false;
             }
 
             var partialHit = f * PVector.dot(e2, q);
@@ -137,8 +107,8 @@ final class Mesh implements IPrimitive {
                 && partialHit < maxt) {
                 return true;
             }
-        }
-        return false;
+            return false;
+        // }
+        // return false;
     }
 }
-

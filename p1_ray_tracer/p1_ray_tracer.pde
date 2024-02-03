@@ -56,12 +56,14 @@ void keyPressed() {
     }
 }
 
+Mesh workingMesh = null;
 
 // this routine parses the text in a scene description file
 void interpreter(String file) {
 
     println("Parsing '" + file + "'");
     String str[] = loadStrings(file);
+    
     if (str == null) println("Error! Failed to read the file.");
 
     for (int i = 0; i < str.length; i++) {
@@ -94,7 +96,13 @@ void interpreter(String file) {
             float b = float(token[3]);
 
             var sColor = new Color(r, g, b);
-            var surface = new Surface(sColor);
+
+            var newMesh = new Mesh();
+            
+            var surface = new Surface(sColor, newMesh);
+            workingMesh = newMesh;
+            println(workingMesh);
+
 
             scene.surfaces.add(surface);
             scene.addObject(surface);
@@ -113,20 +121,14 @@ void interpreter(String file) {
                 float x = float(token[1]);
                 float y = float(token[2]);
                 float z = float(token[3]);
-
-                // var vertex = new PVector(x, y, z);
-
-
                 var currentTransform = scene.getCurrentTransformRef();
-
-                // if (debug_flag) {
-                //     currentTransform.dump();
-                // }
-
                 var vertex = currentTransform.applyTo(new PVector(x, y, z));
-                var surface = scene.surfaces.get(scene.surfaces.size() - 1);
-
-                surface.mesh.addVertex(vertex);
+                if (workingMesh == null) {
+                    throw new RuntimeException("WorkingMesh is null");
+                }
+                else {
+                    workingMesh.addVertex(vertex);
+                }
             }
         } else if (token[0].equals("end")) {
             if (pState != ParsingState.TRIANGLE) {
@@ -181,8 +183,10 @@ void interpreter(String file) {
                 transform.applyTo(new PVector(xmax, ymax, zmax))
             );
             
-            box.diffuseColor = scene.getLatestObject().getColor();
-            scene.replaceLatestObject(box);
+            Surface surface = new Surface(scene.getLatestObject().getColor(), box);
+            scene.replaceLatestObject(
+                surface
+            );
             
         } 
         else if (token[0].equals("named_object")) {

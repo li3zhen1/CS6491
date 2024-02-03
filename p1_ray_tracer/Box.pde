@@ -1,4 +1,4 @@
-final class Box implements IRenderableObject, IPrimitive {
+final class Box implements IPrimitive {
     PVector pMin;
     PVector pMax;
 
@@ -230,43 +230,5 @@ final class Box implements IRenderableObject, IPrimitive {
 
     } 
 
-
-    Hit getIntersection(Ray ray, SceneGraph sg) {
-        PartialHit partialHit = _getIntersection(ray, sg);
-        
-        if (partialHit == null) {
-            return null;
-        }
-        var resultColor = new Color(0.0, 0.0, 0.0);
-        PVector pHit = partialHit.position;
-        PVector normal = partialHit.normal;
-        for(int i = 0; i < sg.lights.size(); i++) {
-            Light light = sg.lights.get(i);
-            PVector lightDir = PVector.sub(light.position, pHit).normalize();
-            // PVector lightDir = lightDir.normalize();
-            // println(lightDir, "-->", lightDirNormalized);
-            float length = PVector.dist(light.position, pHit);
-            Ray shadowRay = new Ray(pHit, lightDir/*lightDir.length()*/);
-            boolean hasOcclusionTowardsThisRay = false;
-            for(int j = 0; j < sg.secneObjectInstances.size(); j++) {
-                IRenderableObject object = sg.secneObjectInstances.get(j);
-                if (object.hasIntersection(shadowRay, EPSILON, length /*lightDir.length()*/)) {
-                    hasOcclusionTowardsThisRay = true;
-                    break;
-                }
-            }
-            if (!hasOcclusionTowardsThisRay) {
-                float cosTheta = normal.dot(lightDir);
-                // println("cosTheta: " + cosTheta);
-                if (cosTheta < 0) {
-                    cosTheta = 0;//-cosTheta;
-                }
-                resultColor.r += diffuseColor.r * light._color.r * cosTheta;
-                resultColor.g += diffuseColor.g * light._color.g * cosTheta;
-                resultColor.b += diffuseColor.b * light._color.b * cosTheta;
-            }
-        }
-        return new Hit(pHit, normal, resultColor);
-    }
 
 }
