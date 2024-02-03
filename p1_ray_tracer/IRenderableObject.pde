@@ -5,7 +5,7 @@ public interface IPrimitive {
 }
 
 public interface IRenderableObject {
-    Color getColor();
+    // Color getColor();
     PartialHit _getIntersection(Ray ray, SceneGraph sg);
     Hit getIntersection(Ray ray, SceneGraph sg);
     boolean hasIntersection(Ray ray, float mint, float maxt);
@@ -16,117 +16,112 @@ final class NamedObject<T extends IRenderableObject> {
     T object;
 }
 
-final class InstancedObject<T extends IRenderableObject> implements IRenderableObject {
-    T namedObjectRef;
-    PMatrix3D transform;
-    PMatrix3D invertedTransform;
-    Color diffuseColor;
+// final class InstancedObject<T extends IRenderableObject> implements IRenderableObject {
+//     T namedObjectRef;
+//     PMatrix3D transform;
+//     PMatrix3D invertedTransform;
+//     Color diffuseColor;
 
-    Color getColor() {
-        return diffuseColor;
-    }
+//     Color getColor() {
+//         return diffuseColor;
+//     }
 
-    PartialHit _getIntersection(Ray ray, SceneGraph sg) {
+//     PartialHit _getIntersection(Ray ray, SceneGraph sg) {
 
-        var transformedRay = ray.copyingTransformedBy(invertedTransform);
-        var partialHit = namedObjectRef._getIntersection(transformedRay, sg);
+//         var transformedRay = ray.copyingTransformedBy(invertedTransform);
+//         var partialHit = namedObjectRef._getIntersection(transformedRay, sg);
 
-        if (partialHit == null) {
-            return null;
-        }
+//         if (partialHit == null) {
+//             return null;
+//         }
 
-        // // partialHit.normal = transform.mult(partialHit.normal, null).normalize();
-        var normalTarget = transform.mult(
-            PVector.add(partialHit.position, partialHit.normal), 
-            null
-        );
-        partialHit.position = transform.mult(partialHit.position, null);
-        partialHit.normal = PVector.sub(normalTarget, partialHit.position).normalize();
+//         // // partialHit.normal = transform.mult(partialHit.normal, null).normalize();
+//         var normalTarget = transform.mult(
+//             PVector.add(partialHit.position, partialHit.normal), 
+//             null
+//         );
+//         partialHit.position = transform.mult(partialHit.position, null);
+//         partialHit.normal = PVector.sub(normalTarget, partialHit.position).normalize();
 
 
-        // if (debug_flag) {
-        //     partialHit.dump();
-        // }
+//         // if (debug_flag) {
+//         //     partialHit.dump();
+//         // }
 
-        return partialHit;
-    }
+//         return partialHit;
+//     }
 
-    Hit getIntersection(Ray ray, SceneGraph sg) {
-        var partialHit = _getIntersection(ray, sg);
-        if (partialHit == null) {
-            return null;
-        }
+//     Hit getIntersection(Ray ray, SceneGraph sg) {
+//         var partialHit = _getIntersection(ray, sg);
+//         if (partialHit == null) {
+//             return null;
+//         }
 
-        var resultColor = new Color(0.0, 0.0, 0.0);
-        PVector pHit = partialHit.position;
-        PVector normal = partialHit.normal;
-        for(int i = 0; i < sg.lights.size(); i++) {
-            Light light = sg.lights.get(i);
-            PVector lightDir = PVector.sub(light.position, pHit);
-            float length = lightDir.mag();
-            // if (debug_flag) {
-            //     println("lightDir: " + lightDir);
-            // }
-            PVector lightDirNormalized = lightDir.normalize();
-            // println(lightDir, "-->", lightDirNormalized);//PVector.dist(light.position, pHit);
-            Ray shadowRay = new Ray(pHit, lightDirNormalized /*lightDir.length()*/);
-            boolean hasOcclusionTowardsThisRay = false;
-            for(int j = 0; j < sg.secneObjectInstances.size(); j++) {
+//         var resultColor = new Color(0.0, 0.0, 0.0);
+//         PVector pHit = partialHit.position;
+//         PVector normal = partialHit.normal;
+//         for(int i = 0; i < sg.lights.size(); i++) {
+//             Light light = sg.lights.get(i);
+//             PVector lightDir = PVector.sub(light.position, pHit);
+//             float length = lightDir.mag();
+//             // if (debug_flag) {
+//             //     println("lightDir: " + lightDir);
+//             // }
+//             PVector lightDirNormalized = lightDir.normalize();
+//             // println(lightDir, "-->", lightDirNormalized);//PVector.dist(light.position, pHit);
+//             Ray shadowRay = new Ray(pHit, lightDirNormalized /*lightDir.length()*/);
+//             boolean hasOcclusionTowardsThisRay = false;
+//             for(int j = 0; j < sg.secneObjectInstances.size(); j++) {
                 
-                if (sg.secneObjectInstances.get(j)
-                        .hasIntersection(shadowRay, EPSILON, length)) {
-                    hasOcclusionTowardsThisRay = true;
-                    break;
-                }
-            }
-            if (!hasOcclusionTowardsThisRay) {
-                float cosTheta = normal.dot(lightDirNormalized);
-                // println("cosTheta: " + cosTheta);
-                if (cosTheta < 0) {
-                    cosTheta = 0;// -cosTheta;
-                }
-                resultColor.r += diffuseColor.r * light._color.r * cosTheta;
-                resultColor.g += diffuseColor.g * light._color.g * cosTheta;
-                resultColor.b += diffuseColor.b * light._color.b * cosTheta;
-            }
-        }
+//                 if (sg.secneObjectInstances.get(j)
+//                         .hasIntersection(shadowRay, EPSILON, length)) {
+//                     hasOcclusionTowardsThisRay = true;
+//                     break;
+//                 }
+//             }
+//             if (!hasOcclusionTowardsThisRay) {
+//                 float cosTheta = normal.dot(lightDirNormalized);
+//                 // println("cosTheta: " + cosTheta);
+//                 if (cosTheta < 0) {
+//                     cosTheta = 0;// -cosTheta;
+//                 }
+//                 resultColor.r += diffuseColor.r * light._color.r * cosTheta;
+//                 resultColor.g += diffuseColor.g * light._color.g * cosTheta;
+//                 resultColor.b += diffuseColor.b * light._color.b * cosTheta;
+//             }
+//         }
 
-        return new Hit(pHit, normal, resultColor);
-    }
+//         return new Hit(pHit, normal, resultColor);
+//     }
 
-    boolean hasIntersection(Ray ray, float mint, float maxt) {
-        return namedObjectRef.hasIntersection(
-            ray.copyingTransformedBy(invertedTransform), mint, maxt
-        );
-    }
+//     boolean hasIntersection(Ray ray, float mint, float maxt) {
+//         return namedObjectRef.hasIntersection(
+//             ray.copyingTransformedBy(invertedTransform), mint, maxt
+//         );
+//     }
 
 
-    public InstancedObject(T namedObject, Mat4x4 transform) {
-        this.namedObjectRef = namedObject;
-        this.transform = transform.toPMatrix3D();
-        this.diffuseColor = namedObject.getColor();
-        var pMat = transform.toPMatrix3D();
-        if (!pMat.invert()) {
-            throw new RuntimeException("Matrix not invertible");
-        }
-        this.invertedTransform = pMat;
+//     public InstancedObject(T namedObject, Mat4x4 transform) {
+//         this.namedObjectRef = namedObject;
+//         this.transform = transform.toPMatrix3D();
+//         this.diffuseColor = namedObject.getColor();
+//         var pMat = transform.toPMatrix3D();
+//         if (!pMat.invert()) {
+//             throw new RuntimeException("Matrix not invertible");
+//         }
+//         this.invertedTransform = pMat;
 
-        invertedTransform.print();
-    }
-}
+//         invertedTransform.print();
+//     }
+// }
 
 
 final class InstancedSurface extends Surface {
-    // Surface namedObjectRef;
-    PMatrix3D transform;
-    PMatrix3D invertedTransform;
-    Color diffuseColor;
+    
+    final PMatrix3D transform;
+    final PMatrix3D invertedTransform;
 
-    Color getColor() {
-        return diffuseColor;
-    }
-
-    PartialHit _getIntersection(Ray ray, SceneGraph sg) {
+    @Override final PartialHit _getIntersection(Ray ray, SceneGraph sg) {
 
         var transformedRay = ray.copyingTransformedBy(invertedTransform);
         var partialHit = super._getIntersection(transformedRay, sg);
@@ -135,46 +130,51 @@ final class InstancedSurface extends Surface {
             return null;
         }
 
-        // // partialHit.normal = transform.mult(partialHit.normal, null).normalize();
         var normalTarget = transform.mult(
             PVector.add(partialHit.position, partialHit.normal), 
             null
         );
-        partialHit.position = transform.mult(partialHit.position, null);
-        partialHit.normal = PVector.sub(normalTarget, partialHit.position).normalize();
-
-
-        // if (debug_flag) {
-        //     partialHit.dump();
-        // }
-
-        return partialHit;
+        
+        return new PartialHit(
+            transform.mult(partialHit.position, null),
+            PVector.sub(normalTarget, partialHit.position).normalize(),
+            partialHit.t0
+        );
+    }
+    
+    @Override final boolean hasIntersection(Ray ray, float mint, float maxt) {
+        return super.hasIntersection(
+            ray.copyingTransformedBy(invertedTransform), mint, maxt
+        );
     }
 
-    Hit getIntersection(Ray ray, SceneGraph sg) {
-        var partialHit = _getIntersection(ray, sg);
+    @Override final Hit getIntersection(Ray ray, SceneGraph sg) {
+        PartialHit partialHit = this._getIntersection(ray, sg);
+
+        
         if (partialHit == null) {
             return null;
         }
-
+                if (debug_flag) {
+            partialHit.dump();
+        }
+        
         var resultColor = new Color(0.0, 0.0, 0.0);
         PVector pHit = partialHit.position;
         PVector normal = partialHit.normal;
+        
         for(int i = 0; i < sg.lights.size(); i++) {
             Light light = sg.lights.get(i);
             PVector lightDir = PVector.sub(light.position, pHit);
+
             float length = lightDir.mag();
-            // if (debug_flag) {
-            //     println("lightDir: " + lightDir);
-            // }
+            
             PVector lightDirNormalized = lightDir.normalize();
-            // println(lightDir, "-->", lightDirNormalized);//PVector.dist(light.position, pHit);
+
             Ray shadowRay = new Ray(pHit, lightDirNormalized /*lightDir.length()*/);
             boolean hasOcclusionTowardsThisRay = false;
             for(int j = 0; j < sg.secneObjectInstances.size(); j++) {
-                
-                if (sg.secneObjectInstances.get(j)
-                        .hasIntersection(shadowRay, EPSILON, length)) {
+                if (sg.secneObjectInstances.get(j).hasIntersection(shadowRay, EPSILON, length /*lightDir.length()*/)) {
                     hasOcclusionTowardsThisRay = true;
                     break;
                 }
@@ -183,39 +183,38 @@ final class InstancedSurface extends Surface {
                 float cosTheta = normal.dot(lightDirNormalized);
                 // println("cosTheta: " + cosTheta);
                 if (cosTheta < 0) {
-                    cosTheta = 0;// -cosTheta;
+                    cosTheta = 0;//-cosTheta;
                 }
-                resultColor.r += diffuseColor.r * light._color.r * cosTheta;
-                resultColor.g += diffuseColor.g * light._color.g * cosTheta;
-                resultColor.b += diffuseColor.b * light._color.b * cosTheta;
+                if (debug_flag) {
+                    println("cosTheta: " + cosTheta);
+                    println("normal: " + normal);
+                    println("lightDirNormalized: " + lightDirNormalized);
+                    println("color: " + _color.r + " " + _color.g + " " + _color.b);
+                    println("lightColor: " + light._color.r + " " + light._color.g + " " + light._color.b);
+                    
+                }
+                resultColor.r += _color.r * light._color.r * cosTheta;
+                resultColor.g += _color.g * light._color.g * cosTheta;
+                resultColor.b += _color.b * light._color.b * cosTheta;
             }
         }
-
         return new Hit(pHit, normal, resultColor);
     }
-
-    boolean hasIntersection(Ray ray, float mint, float maxt) {
-        return super.hasIntersection(
-            ray.copyingTransformedBy(invertedTransform), mint, maxt
-        );
-    }
-
 
     public InstancedSurface(Surface namedObject, Mat4x4 transform) {
         super(namedObject._color, namedObject.primitive);
         this.transform = transform.toPMatrix3D();
-        this.diffuseColor = namedObject.getColor();
+        // this.diffuseColor = namedObject.getColor();
         var pMat = transform.toPMatrix3D();
         if (!pMat.invert()) {
             throw new RuntimeException("Matrix not invertible");
         }
         this.invertedTransform = pMat;
-
-        invertedTransform.print();
+        // invertedTransform.print();
     }
 }
 
 
 
 
-static float EPSILON = 1e-5f;
+static final float EPSILON = 1e-5f;

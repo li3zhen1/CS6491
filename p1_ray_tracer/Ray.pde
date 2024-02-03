@@ -1,8 +1,8 @@
 boolean skip_same_surface = false;
 
 final class Ray {
-    PVector origin;
-    PVector direction;
+    final PVector origin;
+    final PVector direction;
 
 
     Ray(PVector origin, PVector direction) {

@@ -1,7 +1,7 @@
 final class PartialHit {
-    PVector position;
-    PVector normal;
-    float t0;
+    final PVector position;
+    final PVector normal;
+    final float t0;
 
     PartialHit(PVector position, PVector normal, float t0) {
         this.position = position;
@@ -9,7 +9,7 @@ final class PartialHit {
         this.t0 = t0;
     }
 
-    void dump() {
+    final void dump() {
         System.out.println("PartialHit(\n  position: " + position + ",\n"
                 + "  normal: " + normal + ",\n"
                 + "  t0: " + t0 + "\n)");
@@ -19,9 +19,9 @@ final class PartialHit {
 
 
 final class Hit {
-    PVector position;
-    PVector normal;
-    Color _color;
+    final PVector position;
+    final PVector normal;
+    final Color _color;
 
 
     Hit(PVector position, PVector normal, Color _color) {

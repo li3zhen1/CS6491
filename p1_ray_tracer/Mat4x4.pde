@@ -1,7 +1,7 @@
 
 final class Mat4x4 {
 
-    PMatrix3D toPMatrix3D() {
+    final PMatrix3D toPMatrix3D() {
         PMatrix3D mat = new PMatrix3D(
             this.mat[0][0], this.mat[0][1], this.mat[0][2], this.mat[0][3],
             this.mat[1][0], this.mat[1][1], this.mat[1][2], this.mat[1][3],
@@ -13,7 +13,7 @@ final class Mat4x4 {
     
 
 
-    float[][] mat = new float[4][4];
+    final float[][] mat;
 
 
     
@@ -47,7 +47,7 @@ final class Mat4x4 {
     }
 
 
-    Mat4x4 copy() {
+    final Mat4x4 copy() {
         float[][] newMat = new float[4][4];
 
         for (int i = 0; i < 4; i++) {
@@ -60,7 +60,7 @@ final class Mat4x4 {
     }
 
 
-    Mat4x4 dot(Mat4x4 other) {
+    final Mat4x4 dot(Mat4x4 other) {
 
         float[][] newMat = new float[4][4];
 
@@ -77,7 +77,7 @@ final class Mat4x4 {
         return new Mat4x4(newMat);
     }
 
-    Mat4x4 add(Mat4x4 other) {
+    final Mat4x4 add(Mat4x4 other) {
         float[][] newMat = new float[4][4];
 
         for (int i = 0; i < 4; i++) {
@@ -90,7 +90,7 @@ final class Mat4x4 {
     }
 
 
-    Mat4x4 sub(Mat4x4 other) {
+    final Mat4x4 sub(Mat4x4 other) {
         float[][] newMat = new float[4][4];
 
         for (int i = 0; i < 4; i++) {
@@ -103,7 +103,7 @@ final class Mat4x4 {
     }
 
 
-    Mat4x4 elementwiseMultiply(Mat4x4 other) {
+    final Mat4x4 elementwiseMultiply(Mat4x4 other) {
         float[][] newMat = new float[4][4];
 
         for (int i = 0; i < 4; i++) {
@@ -123,7 +123,7 @@ final class Mat4x4 {
 }
 
 
-    Mat4x4 translateMat4x4(float x, float y, float z) {
+    final Mat4x4 translateMat4x4(float x, float y, float z) {
         return new Mat4x4(
             new float[][] {
                 {1, 0, 0, x},
@@ -134,7 +134,7 @@ final class Mat4x4 {
         );
     }
 
-    Mat4x4 scaleMat4x4(float x, float y, float z) {
+    final Mat4x4 scaleMat4x4(float x, float y, float z) {
         return new Mat4x4(
             new float[][] {
                 {x, 0, 0, 0},
@@ -146,7 +146,7 @@ final class Mat4x4 {
     }
 
 
-    Mat4x4 rotateXMat4x4(float rad) {
+    final Mat4x4 rotateXMat4x4(float rad) {
         return new Mat4x4(
             new float[][] {
                 {1, 0, 0, 0},
@@ -157,7 +157,7 @@ final class Mat4x4 {
         );
     }
 
-    Mat4x4 rotateYMat4x4(float rad) {
+    final Mat4x4 rotateYMat4x4(float rad) {
         return new Mat4x4(
             new float[][] {
                 {(float)Math.cos(rad), 0, (float)Math.sin(rad), 0},
@@ -168,7 +168,7 @@ final class Mat4x4 {
         );
     }
 
-    Mat4x4 rotateZMat4x4(float rad) {
+    final Mat4x4 rotateZMat4x4(float rad) {
         return new Mat4x4(
             new float[][] {
                 {(float)Math.cos(rad), (float)-Math.sin(rad), 0, 0},
@@ -179,7 +179,7 @@ final class Mat4x4 {
         );
     }
 
-    Mat4x4 identityMat4x4() {
+    final Mat4x4 identityMat4x4() {
         return new Mat4x4(
             new float[][] {
                 {1, 0, 0, 0},
@@ -190,7 +190,7 @@ final class Mat4x4 {
         );
     }
 
-    Mat4x4 zeroMat4x4() {
+    final Mat4x4 zeroMat4x4() {
         return new Mat4x4(
             new float[][] {
                 {0, 0, 0, 0},

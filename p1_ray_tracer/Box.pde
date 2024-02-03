@@ -2,11 +2,11 @@ final class Box implements IPrimitive {
     PVector pMin;
     PVector pMax;
 
-    Color diffuseColor = new Color(1.0, 1.0, 1.0);
+    // Color diffuseColor = new Color(1.0, 1.0, 1.0);
 
-    Color getColor() {
-        return diffuseColor;
-    }
+    // Color getColor() {
+    //     return diffuseColor;
+    // }
 
     Box(PVector pMin, PVector pMax) {
         if (pMin.x > pMax.x) {

@@ -101,10 +101,7 @@ void interpreter(String file) {
             
             var surface = new Surface(sColor, newMesh);
             workingMesh = newMesh;
-            println(workingMesh);
-
-
-            scene.surfaces.add(surface);
+            
             scene.addObject(surface);
 
         } else if (token[0].equals("begin")) {
@@ -183,10 +180,8 @@ void interpreter(String file) {
                 transform.applyTo(new PVector(xmax, ymax, zmax))
             );
             
-            Surface surface = new Surface(scene.getLatestObject().getColor(), box);
-            scene.replaceLatestObject(
-                surface
-            );
+            // Surface surface = new Surface(scene.getLatestObject()._color, box);
+            scene.updatePrimitiveOfLatestObject(box);
             
         } 
         else if (token[0].equals("named_object")) {
@@ -241,8 +236,8 @@ void draw_scene() {
             // Have your routines (like ray/triangle intersection)
             // print information when this flag is set.
             debug_flag = false;
-            // if (x == 80 && y == 81)
-            //     debug_flag = true;
+            if (x == 80 && y == 81)
+                debug_flag = true;
             // if (x == 112 && y == 112)
             //     debug_flag = true;
             // if (x == 148 && y == 60)

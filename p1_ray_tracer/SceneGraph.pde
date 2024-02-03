@@ -3,36 +3,42 @@ final class SceneGraph {
     float fov;
     Color background;
     ArrayList<Light> lights;
-    ArrayList<Surface> surfaces;
+    // ArrayList<Surface> surfaces;
 
-    HashMap<String, Surface> objectLibrary;
+    final HashMap<String, Surface> objectLibrary;
     
-    ArrayList<
+    final ArrayList<
         Surface
     > secneObjectInstances;
 
-    IRenderableObject getLatestObject() {
+    final Surface getLatestObject() {
         return secneObjectInstances.get(secneObjectInstances.size() - 1);
     }
 
     // <T extends IRenderableObject>
-    void replaceLatestObject(Surface object) {
+    final void replaceLatestObject(Surface object) {
         secneObjectInstances.set(
             secneObjectInstances.size() - 1,
             object
         );
     }
 
-    ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
+    final void updatePrimitiveOfLatestObject(IPrimitive primitive) {
+        var object = secneObjectInstances.get(secneObjectInstances.size() - 1);
+        object.primitive = primitive;
+    }
 
-    void moveLatestObjectToLibraryWithName(String name) {
+    final ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
+
+    final void moveLatestObjectToLibraryWithName(String name) {
         var object = secneObjectInstances.get(secneObjectInstances.size() - 1);
         objectLibrary.put(name, object);
         secneObjectInstances.remove(secneObjectInstances.size() - 1);
     }
 
-    void instantiate(String name) {
+    final void instantiate(String name) {
         var object = objectLibrary.get(name);
+        
         secneObjectInstances.add(
             new InstancedSurface(
                 object,
@@ -46,7 +52,7 @@ final class SceneGraph {
         this.fov = 0;
         this.background = new Color(0, 0, 0);
         this.lights = new ArrayList<Light>();
-        this.surfaces = new ArrayList<Surface>();
+        // this.surfaces = new ArrayList<Surface>();
 
         this.objectLibrary = new HashMap<String, Surface>();
         this.secneObjectInstances = new ArrayList<Surface>();
@@ -54,44 +60,39 @@ final class SceneGraph {
         this.transform.add(identityMat4x4());
     }
 
-    void push() {
+    final void push() {
         this.transform.add(
             getCurrentTransformCopy()
         );
     }
 
-    Mat4x4 getCurrentTransformRef() {
+    final Mat4x4 getCurrentTransformRef() {
         return (this.transform.get(this.transform.size() - 1));
     }
 
-    Mat4x4 getCurrentTransformCopy() {
+    final Mat4x4 getCurrentTransformCopy() {
         return (this.transform.get(this.transform.size() - 1)).copy();
     }
 
-    void pop() {
+    final void pop() {
         this.transform.remove(this.transform.size() - 1);
     }
 
-    // <T extends IRenderableObject> 
-    void addObject(Surface object) {
+    final void addObject(Surface object) {
         secneObjectInstances.add(
-            // new Pair<Mat4x4, T>(
-                // getCurrentTransformCopy(),
-                object
-            // )
+            object
         );
     }
 
-    void translate(float x, float y, float z) {
+    final void translate(float x, float y, float z) {
         Mat4x4 mat = translateMat4x4(x, y, z);
         this.transform.set(
             this.transform.size() - 1, 
             getCurrentTransformRef().dot(mat)
         );
-        // getCurrentTransformRef().dump();
     }
 
-    void scale(float x, float y, float z) {
+    final void scale(float x, float y, float z) {
         Mat4x4 mat = scaleMat4x4(x, y, z);
         this.transform.set(
             this.transform.size() - 1, 
@@ -99,7 +100,7 @@ final class SceneGraph {
         );
     }
 
-    void rotateX(float angle) {
+    final void rotateX(float angle) {
         Mat4x4 mat = rotateXMat4x4(angle);
         this.transform.set(
             this.transform.size() - 1, 
@@ -107,7 +108,7 @@ final class SceneGraph {
         );
     }
 
-    void rotateY(float angle) {
+    final void rotateY(float angle) {
         Mat4x4 mat = rotateYMat4x4(angle);
         this.transform.set(
             this.transform.size() - 1, 
@@ -115,7 +116,7 @@ final class SceneGraph {
         );
     }
 
-    void rotateZ(float angle) {
+    final void rotateZ(float angle) {
         Mat4x4 mat = rotateZMat4x4(angle);
         this.transform.set(
             this.transform.size() - 1, 
@@ -125,7 +126,7 @@ final class SceneGraph {
 
 
 
-    void dump() {
+    final void dump() {
         println("SceneGraph");
         println("  fov: " + fov);
         println("  background: " + background.r + " " + background.g + " " + background.b);
@@ -133,11 +134,6 @@ final class SceneGraph {
         for (int i = 0; i < lights.size(); i++) {
             Light light = lights.get(i);
             println("    light: " + light.position.x + " " + light.position.y + " " + light.position.z + " " + light._color.r + " " + light._color.g + " " + light._color.b);
-        }
-        println("  surfaces: " + surfaces.size());
-        for (int i = 0; i < surfaces.size(); i++) {
-            Surface surface = surfaces.get(i);
-            println("    surface: " + surface._color.r + " " + surface._color.g + " " + surface._color.b);
         }
     }
 

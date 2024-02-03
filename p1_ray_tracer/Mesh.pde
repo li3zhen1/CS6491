@@ -1,31 +1,27 @@
 final class Mesh implements IPrimitive {
-    ArrayList<PVector> vertices;
-
-    Mesh(ArrayList<PVector> vertices) {
-        vertices = new ArrayList<PVector>();
-    }
+    final ArrayList<PVector> vertices;
 
     Mesh() {
-        vertices = new ArrayList<PVector>();
+        this.vertices = new ArrayList<PVector>();
     }
 
-    void addVertex(PVector vertex) {
+    final void addVertex(PVector vertex) {
         vertices.add(vertex);
     }
 
-    PVector getVertex(int index) {
+    final PVector getVertex(int index) {
         return vertices.get(index);
     }
 
-    void setVertex(int index, PVector vertex) {
+    final void setVertex(int index, PVector vertex) {
         vertices.set(index, vertex);
     }
 
-    int triangleCount() {
+    final int triangleCount() {
         return vertices.size() / 3;
     }
 
-    PVector[] getTriangleCopy(int index) {
+    final PVector[] getTriangleCopy(int index) {
         PVector[] triangle = new PVector[3];
         triangle[0] = vertices.get(index * 3);
         triangle[1] = vertices.get(index * 3 + 1);
@@ -36,7 +32,7 @@ final class Mesh implements IPrimitive {
 
 
 
-        PartialHit _getIntersection(Ray ray, SceneGraph sg) {
+    final PartialHit _getIntersection(Ray ray, SceneGraph sg) {
         float closestHitT = Float.MAX_VALUE;
         
         PVector _e1 = new PVector();
@@ -99,7 +95,7 @@ final class Mesh implements IPrimitive {
         }
     }
 
-    boolean hasIntersection(Ray ray, float mint, float maxt) {
+    final boolean hasIntersection(Ray ray, float mint, float maxt) {
         for (int i = 0; i < this.triangleCount(); i++) {
             
             var v1 = this.vertices.get(i * 3);
