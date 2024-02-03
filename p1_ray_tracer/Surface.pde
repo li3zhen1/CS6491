@@ -125,69 +125,64 @@ final class Surface implements IRenderableObject {
 
     PartialHit _getIntersection(Ray ray, SceneGraph sg) {
         float closestHitT = Float.MAX_VALUE;
-        PVector e1 = new PVector();
-        PVector e2 = new PVector();
+        // PVector e1 = new PVector();
+        // PVector e2 = new PVector();
+        PVector _e1 = new PVector();
+        PVector _e2 = new PVector();
         PartialHit result = null;
+        // PVector h = new PVector(0.0, 0.0, 0.0);
         for (int i = 0; i < mesh.triangleCount(); i++) {
             
-        //     var v1 = mesh.vertices.get(i * 3);
-        // var v2 = mesh.vertices.get(i * 3 + 1);
-        // var v3 = mesh.vertices.get(i * 3 + 2);
-        // e1 = PVector.sub(v2, v1);
-        // e2 = PVector.sub(v3, v1);
+            var v1 = mesh.vertices.get(i * 3);
+            var v2 = mesh.vertices.get(i * 3 + 1);
+            var v3 = mesh.vertices.get(i * 3 + 2);
+            var e1 = 
+            PVector.sub(v2, v1);
+            var e2 = 
+            PVector.sub(v3, v1);
 
-        // var h = ray.direction.cross(e2);
-        // var a = e1.dot(h);
+            var h = ray.direction.cross(e2);
+            var a = e1.dot(h);
 
-        // if (a > -EPSILON && a < EPSILON) {
-        //     continue;
-        // }
-
-        // var f = 1.0 / a;
-        // var s = PVector.sub(ray.origin, v1);
-        // var u = f * s.dot(h);
-
-        // if (u < 0.0 || u > 1.0) {
-        //     continue;
-        // }
-
-        // var q = s.cross(e1);
-        // var v = f * PVector.dot(ray.direction, q);
-
-        // if (v < 0.0 || u + v > 1.0) {
-        //     continue;
-        // }
-
-        // var hitT = f * PVector.dot(e2, q);
-            var partialHit = intersectionWithTriangleStartingAt(ray, i);
-
-            // if (partialHit < closestHitT) {
-            //     closestHitT = hitT;
-            // }
-
-            if (partialHit != null) {
-                if (result == null) {
-                    result = partialHit;
-                } else {
-                    if (partialHit.t0 < result.t0) {
-                        result = partialHit;
-                    }
-                }
+            if (a > -EPSILON && a < EPSILON) {
+                continue;
             }
-        }
 
-        return result;
+            var f = 1.0 / a;
+            var s = PVector.sub(ray.origin, v1);
+            var u = f * s.dot(h);
+
+            if (u < 0.0 || u > 1.0) {
+                continue;
+            }
+
+            var q = s.cross(e1);
+            var v = f * PVector.dot(ray.direction, q);
+
+            if (v < 0.0 || u + v > 1.0) {
+                continue;
+            }
+
+            var hitT = f * PVector.dot(e2, q);
+
+            if (hitT < closestHitT) {
+                closestHitT = hitT;
+                _e1 = e1;
+                _e2 = e2;
+            }
+
+        }
         
-        // if (closestHitT > EPSILON && closestHitT < Float.MAX_VALUE) {
-        //     var point = PVector.add(ray.origin, PVector.mult(ray.direction, closestHitT));
-        //     var normal = e1.cross(e2).normalize();
-        //     if (ray.direction.dot(normal) > 0) {
-        //         normal.mult(-1);
-        //     }
-        //     return new PartialHit(point, normal, closestHitT);
-        // } else {
-        //     return null;
-        // }
+        if (closestHitT > EPSILON && closestHitT < Float.MAX_VALUE) {
+            var point = PVector.add(ray.origin, PVector.mult(ray.direction, closestHitT));
+            var normal = _e1.cross(_e2).normalize();
+            if (ray.direction.dot(normal) > 0) {
+                normal.mult(-1);
+            }
+            return new PartialHit(point, normal, closestHitT);
+        } else {
+            return null;
+        }
     }
 
     Hit getIntersection(Ray ray, SceneGraph sg) {
@@ -199,12 +194,17 @@ final class Surface implements IRenderableObject {
         var resultColor = new Color(0.0, 0.0, 0.0);
         PVector pHit = partialHit.position;
         PVector normal = partialHit.normal;
+        
         for(int i = 0; i < sg.lights.size(); i++) {
             Light light = sg.lights.get(i);
             PVector lightDir = PVector.sub(light.position, pHit);
+
+            
             PVector lightDirNormalized = lightDir.normalize();
-            // println(lightDir, "-->", lightDirNormalized);
-            float length = PVector.dist(light.position, pHit);
+
+
+            float length = lightDir.mag();
+
             Ray shadowRay = new Ray(pHit, lightDirNormalized /*lightDir.length()*/);
             boolean hasOcclusionTowardsThisRay = false;
             for(int j = 0; j < sg.secneObjectInstances.size(); j++) {
@@ -229,7 +229,39 @@ final class Surface implements IRenderableObject {
 
     boolean hasIntersection(Ray ray, float mint, float maxt) {
         for (int i = 0; i < mesh.triangleCount(); i++) {
-            if ( _intersectionWithTriangleStartingAt(ray, i) > EPSILON 
+            // float partialHit = _intersectionWithTriangleStartingAt(ray, i);
+
+            var v1 = mesh.vertices.get(i * 3);
+            var v2 = mesh.vertices.get(i * 3 + 1);
+            var v3 = mesh.vertices.get(i * 3 + 2);
+            var e1 = PVector.sub(v2, v1);
+            var e2 = PVector.sub(v3, v1);
+
+            var h = ray.direction.cross(e2);
+            var a = e1.dot(h);
+
+            if (a > -EPSILON && a < EPSILON) {
+                continue;
+            }
+
+            var f = 1.0 / a;
+            var s = PVector.sub(ray.origin, v1);
+            var u = f * s.dot(h);
+
+            if (u < 0.0 || u > 1.0) {
+                continue;
+            }
+
+            var q = s.cross(e1);
+            var v = f * PVector.dot(ray.direction, q);
+
+            if (v < 0.0 || u + v > 1.0) {
+                continue;
+            }
+
+            var partialHit = f * PVector.dot(e2, q);
+
+            if ( partialHit > EPSILON 
                 && partialHit > mint 
                 && partialHit < maxt) {
                 return true;
