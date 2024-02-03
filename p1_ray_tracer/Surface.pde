@@ -1,7 +1,7 @@
 
 
 
-final class Surface implements IPrimitive {
+final class Surface implements IRenderableObject {
     Color _color;
     boolean accelerated = false;
     Mesh mesh;
@@ -78,6 +78,47 @@ final class Surface implements IPrimitive {
         }
     }
 
+    boolean hasIntersection(Ray ray, float mint, float maxt) {
+        for (int i = 0; i < mesh.triangleCount(); i++) {
+            
+            var v1 = mesh.vertices.get(i * 3);
+            var v2 = mesh.vertices.get(i * 3 + 1);
+            var v3 = mesh.vertices.get(i * 3 + 2);
+            var e1 = PVector.sub(v2, v1);
+            var e2 = PVector.sub(v3, v1);
+
+            var h = ray.direction.cross(e2);
+            var a = e1.dot(h);
+
+            if (a > -EPSILON && a < EPSILON) {
+                continue;
+            }
+
+            var f = 1.0f / a;
+            var s = PVector.sub(ray.origin, v1);
+            var u = f * s.dot(h);
+
+            if (u < 0.0f || u > 1.0f) {
+                continue;
+            }
+
+            var q = s.cross(e1);
+            var v = f * PVector.dot(ray.direction, q);
+
+            if (v < 0.0f || u + v > 1.0f) {
+                continue;
+            }
+
+            var partialHit = f * PVector.dot(e2, q);
+
+            if ( partialHit > EPSILON 
+                && partialHit > mint 
+                && partialHit < maxt) {
+                return true;
+            }
+        }
+        return false;
+    }
     Hit getIntersection(Ray ray, SceneGraph sg) {
         PartialHit partialHit = _getIntersection(ray, sg);
         
@@ -120,46 +161,5 @@ final class Surface implements IPrimitive {
         return new Hit(pHit, normal, resultColor);
     }
 
-    boolean hasIntersection(Ray ray, float mint, float maxt) {
-        for (int i = 0; i < mesh.triangleCount(); i++) {
-            
-            var v1 = mesh.vertices.get(i * 3);
-            var v2 = mesh.vertices.get(i * 3 + 1);
-            var v3 = mesh.vertices.get(i * 3 + 2);
-            var e1 = PVector.sub(v2, v1);
-            var e2 = PVector.sub(v3, v1);
-
-            var h = ray.direction.cross(e2);
-            var a = e1.dot(h);
-
-            if (a > -EPSILON && a < EPSILON) {
-                continue;
-            }
-
-            var f = 1.0f / a;
-            var s = PVector.sub(ray.origin, v1);
-            var u = f * s.dot(h);
-
-            if (u < 0.0f || u > 1.0f) {
-                continue;
-            }
-
-            var q = s.cross(e1);
-            var v = f * PVector.dot(ray.direction, q);
-
-            if (v < 0.0f || u + v > 1.0f) {
-                continue;
-            }
-
-            var partialHit = f * PVector.dot(e2, q);
-
-            if ( partialHit > EPSILON 
-                && partialHit > mint 
-                && partialHit < maxt) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
 

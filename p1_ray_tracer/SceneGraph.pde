@@ -5,17 +5,17 @@ final class SceneGraph {
     ArrayList<Light> lights;
     ArrayList<Surface> surfaces;
 
-    HashMap<String, IPrimitive> objectLibrary;
+    HashMap<String, IRenderableObject> objectLibrary;
     
     ArrayList<
-        IPrimitive
+        IRenderableObject
     > secneObjectInstances;
 
-    IPrimitive getLatestObject() {
+    IRenderableObject getLatestObject() {
         return secneObjectInstances.get(secneObjectInstances.size() - 1);
     }
 
-    <T extends IPrimitive>
+    <T extends IRenderableObject>
     void replaceLatestObject(T object) {
         secneObjectInstances.set(
             secneObjectInstances.size() - 1,
@@ -26,15 +26,15 @@ final class SceneGraph {
     ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
 
     void moveLatestObjectToLibraryWithName(String name) {
-        IPrimitive object = secneObjectInstances.get(secneObjectInstances.size() - 1);
+        IRenderableObject object = secneObjectInstances.get(secneObjectInstances.size() - 1);
         objectLibrary.put(name, object);
         secneObjectInstances.remove(secneObjectInstances.size() - 1);
     }
 
     void instantiate(String name) {
-        IPrimitive object = objectLibrary.get(name);
+        IRenderableObject object = objectLibrary.get(name);
         secneObjectInstances.add(
-            // new Pair<Mat4x4, IPrimitive>(
+            // new Pair<Mat4x4, IRenderableObject>(
                 // getCurrentTransformCopy(),
             new InstancedObject(
                 object,
@@ -51,8 +51,8 @@ final class SceneGraph {
         this.lights = new ArrayList<Light>();
         this.surfaces = new ArrayList<Surface>();
 
-        this.objectLibrary = new HashMap<String, IPrimitive>();
-        this.secneObjectInstances = new ArrayList<IPrimitive>();
+        this.objectLibrary = new HashMap<String, IRenderableObject>();
+        this.secneObjectInstances = new ArrayList<IRenderableObject>();
 
         this.transform.add(identityMat4x4());
     }
@@ -75,7 +75,7 @@ final class SceneGraph {
         this.transform.remove(this.transform.size() - 1);
     }
 
-    <T extends IPrimitive> 
+    <T extends IRenderableObject> 
     void addObject(T object) {
         secneObjectInstances.add(
             // new Pair<Mat4x4, T>(
