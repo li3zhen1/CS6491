@@ -119,9 +119,9 @@ void interpreter(String file) {
 
                 var currentTransform = scene.getCurrentTransformRef();
 
-                if (debug_flag) {
-                    currentTransform.dump();
-                }
+                // if (debug_flag) {
+                //     currentTransform.dump();
+                // }
 
                 var vertex = currentTransform.applyTo(new PVector(x, y, z));
                 var surface = scene.surfaces.get(scene.surfaces.size() - 1);

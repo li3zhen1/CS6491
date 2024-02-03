@@ -1,4 +1,4 @@
-public final class Box implements IRenderableObject {
+final class Box implements IRenderableObject {
     PVector pMin;
     PVector pMax;
 

@@ -11,62 +11,6 @@ final class Surface implements IRenderableObject {
         return _color;
     }
 
-    PartialHit intersectionWithTriangleStartingAt(
-        Ray ray, 
-        int triangleIndex
-    ) {
-        
-        var v1 = mesh.vertices.get(triangleIndex * 3);
-        var v2 = mesh.vertices.get(triangleIndex * 3 + 1);
-        var v3 = mesh.vertices.get(triangleIndex * 3 + 2);
-        var e1 = PVector.sub(v2, v1);
-        var e2 = PVector.sub(v3, v1);
-
-        var h = ray.direction.cross(e2);
-        var a = e1.dot(h);
-
-        if (a > -EPSILON && a < EPSILON) {
-            return null;//Float.MAX_VALUE;
-        }
-
-        var f = 1.0 / a;
-        var s = PVector.sub(ray.origin, v1);
-        var u = f * s.dot(h);
-
-        if (u < 0.0 || u > 1.0) {
-            return null;//Float.MAX_VALUE;
-        }
-
-        var q = s.cross(e1);
-        var v = f * PVector.dot(ray.direction, q);
-
-        if (v < 0.0 || u + v > 1.0) {
-            return null;//Float.MAX_VALUE;
-        }
-
-        var t = f * PVector.dot(e2, q);
-
-        // return t;
-
-        if (debug_flag) {
-            println("t: " + t);
-        }
-
-        if (t > EPSILON) {
-            var point = PVector.add(ray.origin, PVector.mult(ray.direction, t));
-            var normal = e1.cross(e2).normalize();
-            if (ray.direction.dot(normal) > 0) {
-                normal.mult(-1);
-            }
-            return new PartialHit(point, normal, t);
-        } else {
-            return null;
-        }
-    }
-
-
-
-
     float _intersectionWithTriangleStartingAt(
         Ray ray, 
         int triangleIndex
@@ -125,12 +69,13 @@ final class Surface implements IRenderableObject {
 
     PartialHit _getIntersection(Ray ray, SceneGraph sg) {
         float closestHitT = Float.MAX_VALUE;
-        // PVector e1 = new PVector();
-        // PVector e2 = new PVector();
+        
         PVector _e1 = new PVector();
         PVector _e2 = new PVector();
         PartialHit result = null;
-        // PVector h = new PVector(0.0, 0.0, 0.0);
+        var rayDirection = ray.direction;
+        var rayOrigin = ray.origin;
+        
         for (int i = 0; i < mesh.triangleCount(); i++) {
             
             var v1 = mesh.vertices.get(i * 3);
@@ -141,7 +86,7 @@ final class Surface implements IRenderableObject {
             var e2 = 
             PVector.sub(v3, v1);
 
-            var h = ray.direction.cross(e2);
+            var h = rayDirection.cross(e2);
             var a = e1.dot(h);
 
             if (a > -EPSILON && a < EPSILON) {
@@ -149,7 +94,7 @@ final class Surface implements IRenderableObject {
             }
 
             var f = 1.0 / a;
-            var s = PVector.sub(ray.origin, v1);
+            var s = PVector.sub(rayOrigin, v1);
             var u = f * s.dot(h);
 
             if (u < 0.0 || u > 1.0) {
@@ -157,7 +102,7 @@ final class Surface implements IRenderableObject {
             }
 
             var q = s.cross(e1);
-            var v = f * PVector.dot(ray.direction, q);
+            var v = f * PVector.dot(rayDirection, q);
 
             if (v < 0.0 || u + v > 1.0) {
                 continue;
@@ -174,9 +119,9 @@ final class Surface implements IRenderableObject {
         }
         
         if (closestHitT > EPSILON && closestHitT < Float.MAX_VALUE) {
-            var point = PVector.add(ray.origin, PVector.mult(ray.direction, closestHitT));
+            var point = PVector.add(rayOrigin, PVector.mult(rayDirection, closestHitT));
             var normal = _e1.cross(_e2).normalize();
-            if (ray.direction.dot(normal) > 0) {
+            if (rayDirection.dot(normal) > 0) {
                 normal.mult(-1);
             }
             return new PartialHit(point, normal, closestHitT);
@@ -229,8 +174,7 @@ final class Surface implements IRenderableObject {
 
     boolean hasIntersection(Ray ray, float mint, float maxt) {
         for (int i = 0; i < mesh.triangleCount(); i++) {
-            // float partialHit = _intersectionWithTriangleStartingAt(ray, i);
-
+            
             var v1 = mesh.vertices.get(i * 3);
             var v2 = mesh.vertices.get(i * 3 + 1);
             var v3 = mesh.vertices.get(i * 3 + 2);
@@ -244,18 +188,18 @@ final class Surface implements IRenderableObject {
                 continue;
             }
 
-            var f = 1.0 / a;
+            var f = 1.0f / a;
             var s = PVector.sub(ray.origin, v1);
             var u = f * s.dot(h);
 
-            if (u < 0.0 || u > 1.0) {
+            if (u < 0.0f || u > 1.0f) {
                 continue;
             }
 
             var q = s.cross(e1);
             var v = f * PVector.dot(ray.direction, q);
 
-            if (v < 0.0 || u + v > 1.0) {
+            if (v < 0.0f || u + v > 1.0f) {
                 continue;
             }
 

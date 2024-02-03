@@ -11,12 +11,12 @@ public interface IRenderableObject {
     boolean hasIntersection(Ray ray, float mint, float maxt);
 }
 
-class NamedObject<T extends IRenderableObject> {
+final class NamedObject<T extends IRenderableObject> {
     String name; 
     T object;
 }
 
-class InstancedObject<T extends IRenderableObject> implements IRenderableObject {
+final class InstancedObject<T extends IRenderableObject> implements IRenderableObject {
     T namedObjectRef;
     PMatrix3D transform;
     PMatrix3D invertedTransform;
@@ -44,9 +44,9 @@ class InstancedObject<T extends IRenderableObject> implements IRenderableObject 
         partialHit.normal = PVector.sub(normalTarget, partialHit.position).normalize();
 
 
-        if (debug_flag) {
-            partialHit.dump();
-        }
+        // if (debug_flag) {
+        //     partialHit.dump();
+        // }
 
         return partialHit;
     }
@@ -64,16 +64,17 @@ class InstancedObject<T extends IRenderableObject> implements IRenderableObject 
             Light light = sg.lights.get(i);
             PVector lightDir = PVector.sub(light.position, pHit);
             float length = lightDir.mag();
-            if (debug_flag) {
-                println("lightDir: " + lightDir);
-            }
+            // if (debug_flag) {
+            //     println("lightDir: " + lightDir);
+            // }
             PVector lightDirNormalized = lightDir.normalize();
             // println(lightDir, "-->", lightDirNormalized);//PVector.dist(light.position, pHit);
             Ray shadowRay = new Ray(pHit, lightDirNormalized /*lightDir.length()*/);
             boolean hasOcclusionTowardsThisRay = false;
             for(int j = 0; j < sg.secneObjectInstances.size(); j++) {
-                IRenderableObject object = sg.secneObjectInstances.get(j);
-                if (object.hasIntersection(shadowRay, EPSILON, length /*lightDir.length()*/)) {
+                
+                if (sg.secneObjectInstances.get(j)
+                        .hasIntersection(shadowRay, EPSILON, length)) {
                     hasOcclusionTowardsThisRay = true;
                     break;
                 }
@@ -87,11 +88,6 @@ class InstancedObject<T extends IRenderableObject> implements IRenderableObject 
                 resultColor.r += diffuseColor.r * light._color.r * cosTheta;
                 resultColor.g += diffuseColor.g * light._color.g * cosTheta;
                 resultColor.b += diffuseColor.b * light._color.b * cosTheta;
-            }
-            if (debug_flag) {
-                
-                println("hasOcclusionTowardsThisRay: " + hasOcclusionTowardsThisRay);
-                shadowRay.dump();
             }
         }
 
@@ -120,4 +116,4 @@ class InstancedObject<T extends IRenderableObject> implements IRenderableObject 
 }
 
 
-static float EPSILON = 1e-5f;
+final static float EPSILON = 1e-5f;
