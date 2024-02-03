@@ -1,7 +1,7 @@
 
 
 
-class Surface implements IRenderableObject {
+class Surface {
     Color _color;
 
     boolean accelerated = false;

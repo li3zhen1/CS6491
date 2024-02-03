@@ -101,7 +101,7 @@ void interpreter(String file) {
             
             var surface = new Surface(sColor, newMesh);
             workingMesh = newMesh;
-            println(workingMesh);
+            // println(workingMesh);
 
 
             scene.surfaces.add(surface);

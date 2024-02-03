@@ -11,11 +11,6 @@ public interface IRenderableObject {
     boolean hasIntersection(Ray ray, float mint, float maxt);
 }
 
-final class NamedObject<T extends IRenderableObject> {
-    String name; 
-    T object;
-}
-
 
 final class InstancedSurface extends Surface {
 
