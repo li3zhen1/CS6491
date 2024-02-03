@@ -1,9 +1,9 @@
 
-final class Tuple<T1, T2> {
+final class Pair<T1, T2> {
     T1 first;
     T2 second;
 
-    Tuple(T1 item1, T2 item2) {
+    Pair(T1 item1, T2 item2) {
         this.first = item1;
         this.second = item2;
     }

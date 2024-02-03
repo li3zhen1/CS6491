@@ -9,7 +9,7 @@ ParsingState pState = ParsingState.GLOBAL;
 SceneGraph scene = new SceneGraph();
 
 void setup() {
-    size(50, 50);
+    size(300, 300);
     noStroke();
     background(0, 0, 0);
 }
@@ -97,7 +97,7 @@ void interpreter(String file) {
             var surface = new Surface(sColor);
 
             scene.surfaces.add(surface);
-            scene.secneObjectInstances.add(surface);
+            scene.addObject(surface);
 
         } else if (token[0].equals("begin")) {
             if (pState != ParsingState.GLOBAL) {
@@ -129,7 +129,6 @@ void interpreter(String file) {
                 surface.mesh.addVertex(vertex);
             }
         } else if (token[0].equals("end")) {
-
             if (pState != ParsingState.TRIANGLE) {
                 println("Error: 'end' without 'surface'");
             } else {
@@ -175,14 +174,20 @@ void interpreter(String file) {
             float ymax = float(token[5]);
             float zmax = float(token[6]);
 
-            var box = new Box(new PVector(xmin, ymin, zmin), new PVector(xmax, ymax, zmax));
-            scene.secneObjectInstances.add(box);
+            var transform = scene.getCurrentTransformRef();
+
+            var box = new Box(
+                transform.applyTo(new PVector(xmin, ymin, zmin)), 
+                transform.applyTo(new PVector(xmax, ymax, zmax))
+            );
+            
+            box.diffuseColor = scene.getLatestObject().getColor();
+            scene.replaceLatestObject(box);
             
         } 
         else if (token[0].equals("named_object")) {
             String name = token[1];
             scene.moveLatestObjectToLibraryWithName(name);
-
         }
         else if (token[0].equals("instance")) {
             String name = token[1];
@@ -196,6 +201,7 @@ void interpreter(String file) {
         }
         else if (token[0].equals("push")) {
             scene.push();
+
         } else if (token[0].equals("pop")) {
             scene.pop();
         } else if (token[0].equals("#")) {
@@ -220,29 +226,44 @@ void draw_scene() {
     float heightFloat = (float) height;
 
     float fovRadians = scene.fov * PI / 180.0;
+    float fovTan = tan(fovRadians / 2.0);
 
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
+
+            
 
             // Maybe set debug flag true for ONE pixel.
             // Have your routines (like ray/triangle intersection)
             // print information when this flag is set.
             debug_flag = false;
-            if (x == 150 && y == 150)
-                debug_flag = true;
+
+            // if (x == 112 && y == 112)
+            //     debug_flag = true;
+            // if (x == 148 && y == 60)
+            //     debug_flag = true;
+            // if (x == 72 && y == 200)
+            //     debug_flag = true;
 
             // create and cast an eye ray in order to calculate the pixel color
             float xFloat = (float) x + 0.5;
             float yFloat = (float) y + 0.5;
 
 
-            float deltaScreenX = (xFloat - widthFloat / 2.0) / (widthFloat / 2.0) * tan(fovRadians / 2.0);
-            float deltaScreenY = (heightFloat / 2.0 - yFloat) / (heightFloat / 2.0) * tan(fovRadians / 2.0);
+            float deltaScreenX = (xFloat - widthFloat / 2.0) / (widthFloat / 2.0) * fovTan;
+            float deltaScreenY = (heightFloat / 2.0 - yFloat) / (heightFloat / 2.0) * fovTan;
             float deltaScreenZ = -1.0;
 
             var direction = new PVector(deltaScreenX, deltaScreenY, deltaScreenZ);
 
             var ray = new Ray(eye, direction);
+
+            // ray.dump();
+            // ray.mutatingTransformedBy(transform);
+// print("->");
+// ray.dump();
+// print("\n");
+
 
             Hit closestIntersection = null;
 
@@ -250,7 +271,10 @@ void draw_scene() {
 
             for (int i = 0; i < scene.secneObjectInstances.size(); i++) {
                 var object = scene.secneObjectInstances.get(i);
-                var intersection = object.getIntersection(ray, scene);
+                var intersection = object.getIntersection(
+                    ray, 
+                    scene
+                );
                 if (intersection != null) {
                     if (closestIntersection == null || closestIntersection.position.z < intersection.position.z) {
                         closestIntersection = intersection;
@@ -278,6 +302,9 @@ void draw_scene() {
             //     set(x, y, closestIntersection._color.asValue());
             // }
 
+            if (debug_flag) {
+                set(x, y, color(255, 0, 0));
+            }
         }
     }
     println("============ Rendering finished ============ ");

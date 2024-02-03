@@ -6,7 +6,22 @@ final class SceneGraph {
     ArrayList<Surface> surfaces;
 
     HashMap<String, IRenderableObject> objectLibrary;
-    ArrayList<IRenderableObject> secneObjectInstances;
+    
+    ArrayList<
+        IRenderableObject
+    > secneObjectInstances;
+
+    IRenderableObject getLatestObject() {
+        return secneObjectInstances.get(secneObjectInstances.size() - 1);
+    }
+
+    <T extends IRenderableObject>
+    void replaceLatestObject(T object) {
+        secneObjectInstances.set(
+            secneObjectInstances.size() - 1,
+            object
+        );
+    }
 
     ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
 
@@ -18,9 +33,16 @@ final class SceneGraph {
 
     void instantiate(String name) {
         IRenderableObject object = objectLibrary.get(name);
-        secneObjectInstances.add(object);
+        secneObjectInstances.add(
+            // new Pair<Mat4x4, IRenderableObject>(
+                // getCurrentTransformCopy(),
+            new InstancedObject(
+                object,
+                getCurrentTransformCopy()
+            )
+            // )
+        );
     }
-
 
 
     SceneGraph() {
@@ -53,12 +75,23 @@ final class SceneGraph {
         this.transform.remove(this.transform.size() - 1);
     }
 
+    <T extends IRenderableObject> 
+    void addObject(T object) {
+        secneObjectInstances.add(
+            // new Pair<Mat4x4, T>(
+                // getCurrentTransformCopy(),
+                object
+            // )
+        );
+    }
+
     void translate(float x, float y, float z) {
         Mat4x4 mat = translateMat4x4(x, y, z);
         this.transform.set(
             this.transform.size() - 1, 
             getCurrentTransformRef().dot(mat)
         );
+        // getCurrentTransformRef().dump();
     }
 
     void scale(float x, float y, float z) {

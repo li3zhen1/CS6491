@@ -4,28 +4,18 @@ final class Ray {
     PVector origin;
     PVector direction;
 
-    // float mint;
-    // float maxt;
 
     Ray(PVector origin, PVector direction) {
         this.origin = origin;
         this.direction = direction;
-
-        // this.mint = 0.0f;
-        // this.maxt = Float.MAX_VALUE;
     }
 
-    void dump() {
-        println("Ray");
-        println("  origin: " + origin.x + " " + origin.y + " " + origin.z);
-        println("  direction: " + direction.x + " " + direction.y + " " + direction.z);
-    }
 
 
     // Check if the ray intersects with the surface, and return the hit point
     public Hit intersect(Surface surface, int excludingTriangleIndex) {
 
-        Tuple<PVector, PVector> result = null;
+        Pair<PVector, PVector> result = null;
 
         int currentTriangleIndex = 0;
 
@@ -64,7 +54,7 @@ final class Ray {
         var lights = sceneGraphRef.lights;
         var surfaces = sceneGraphRef.surfaces;
 
-        Tuple<PVector, PVector> result = null;
+        Pair<PVector, PVector> result = null;
 
         int currentTriangleIndex = 0;
 
@@ -136,7 +126,7 @@ final class Ray {
 
 
 
-    private Tuple<PVector, PVector> _intersect(Surface surface, int triangleIndex) {
+    private Pair<PVector, PVector> _intersect(Surface surface, int triangleIndex) {
         var tri = surface.mesh.getTriangleCopy(triangleIndex);
         var v1 = tri[0];
         var v2 = tri[1];
@@ -175,7 +165,7 @@ final class Ray {
             if (direction.dot(normal) > 0) {
                 normal.mult(-1);
             }
-            return new Tuple<PVector, PVector>(point, normal);
+            return new Pair<PVector, PVector>(point, normal);
         } else {
             return null;
         }
@@ -187,5 +177,17 @@ final class Ray {
 
     PVector getPosition(float t) {
         return PVector.add(origin, PVector.mult(direction, t));
+    }
+
+    Ray copyingTransformedBy(PMatrix3D m) {
+        var newOrigin = m.mult(origin, null);
+        var newTarget = m.mult(PVector.add(origin, direction), null);
+        var newDirection = PVector.sub(newTarget, newOrigin).normalize();
+        return new Ray(newOrigin, newDirection);
+    } 
+
+
+    void dump() {
+        print("Ray(origin: ", origin, ", direction: ", direction, ")");
     }
 }
