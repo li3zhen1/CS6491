@@ -15,7 +15,6 @@ final class SceneGraph {
         return secneObjectInstances.get(secneObjectInstances.size() - 1);
     }
 
-    // <T extends IRenderableObject>
     void replaceLatestObject(Surface object) {
         secneObjectInstances.set(
             secneObjectInstances.size() - 1,
