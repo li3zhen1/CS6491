@@ -219,6 +219,7 @@ void reset_scene() {
 
 // This is where you should put your code for creating eye rays and tracing them.
 void draw_scene() {
+    int timer = millis();
     println("\n\n============ Rendering ........ ============ ");
     PVector eye = new PVector(0, 0, 0);
 
@@ -237,7 +238,8 @@ void draw_scene() {
             // Have your routines (like ray/triangle intersection)
             // print information when this flag is set.
             debug_flag = false;
-
+            if (x == 80 && y == 81)
+                debug_flag = true;
             // if (x == 112 && y == 112)
             //     debug_flag = true;
             // if (x == 148 && y == 60)
@@ -260,14 +262,12 @@ void draw_scene() {
 
             // ray.dump();
             // ray.mutatingTransformedBy(transform);
-// print("->");
-// ray.dump();
-// print("\n");
+            // print("->");
+            // ray.dump();
+            // print("\n");
 
 
             Hit closestIntersection = null;
-
-
 
             for (int i = 0; i < scene.secneObjectInstances.size(); i++) {
                 var object = scene.secneObjectInstances.get(i);
@@ -308,13 +308,19 @@ void draw_scene() {
         }
     }
     println("============ Rendering finished ============ ");
+    int new_timer = millis();
+    int diff = new_timer - timer;
+    float seconds = diff / 1000.0;
+    println ("timer = " + seconds);
 }
 
 // prints mouse location clicks, for help in debugging
 void mousePressed() {
+    // set(mouseX, mouseY, color(0, 255, 255));
     println("You pressed the mouse at " + mouseX + " " + mouseY);
 }
 
 // you don't need to add anything in the "draw" function for this project
 void draw() {
 }
+

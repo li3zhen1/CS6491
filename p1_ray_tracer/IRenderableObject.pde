@@ -35,10 +35,6 @@ class InstancedObject<T extends IRenderableObject> implements IRenderableObject 
             return null;
         }
 
-        if (debug_flag) {
-            partialHit.dump();
-        }
-
         // // partialHit.normal = transform.mult(partialHit.normal, null).normalize();
         var normalTarget = transform.mult(
             PVector.add(partialHit.position, partialHit.normal), 
@@ -67,6 +63,9 @@ class InstancedObject<T extends IRenderableObject> implements IRenderableObject 
         for(int i = 0; i < sg.lights.size(); i++) {
             Light light = sg.lights.get(i);
             PVector lightDir = PVector.sub(light.position, pHit);
+            if (debug_flag) {
+                println("lightDir: " + lightDir);
+            }
             PVector lightDirNormalized = lightDir.normalize();
             // println(lightDir, "-->", lightDirNormalized);
             float length = PVector.dist(light.position, pHit);
@@ -88,6 +87,11 @@ class InstancedObject<T extends IRenderableObject> implements IRenderableObject 
                 resultColor.r += diffuseColor.r * light._color.r * cosTheta;
                 resultColor.g += diffuseColor.g * light._color.g * cosTheta;
                 resultColor.b += diffuseColor.b * light._color.b * cosTheta;
+            }
+            if (debug_flag) {
+                
+                println("hasOcclusionTowardsThisRay: " + hasOcclusionTowardsThisRay);
+                shadowRay.dump();
             }
         }
 

@@ -89,7 +89,7 @@ public final class Box implements IRenderableObject {
     PartialHit _getIntersection(Ray ray, SceneGraph sg) {
 
 
-        boolean hasIntersection = false;
+        // boolean hasIntersection = false;
         
         int hitAxis = 0; // 1 = x, 2 = y, 3 = z
  
@@ -245,11 +245,11 @@ public final class Box implements IRenderableObject {
         PVector normal = partialHit.normal;
         for(int i = 0; i < sg.lights.size(); i++) {
             Light light = sg.lights.get(i);
-            PVector lightDir = PVector.sub(light.position, pHit);
-            PVector lightDirNormalized = lightDir.normalize();
+            PVector lightDir = PVector.sub(light.position, pHit).normalize();
+            // PVector lightDir = lightDir.normalize();
             // println(lightDir, "-->", lightDirNormalized);
             float length = PVector.dist(light.position, pHit);
-            Ray shadowRay = new Ray(pHit, lightDirNormalized /*lightDir.length()*/);
+            Ray shadowRay = new Ray(pHit, lightDir/*lightDir.length()*/);
             boolean hasOcclusionTowardsThisRay = false;
             for(int j = 0; j < sg.secneObjectInstances.size(); j++) {
                 IRenderableObject object = sg.secneObjectInstances.get(j);
@@ -259,7 +259,7 @@ public final class Box implements IRenderableObject {
                 }
             }
             if (!hasOcclusionTowardsThisRay) {
-                float cosTheta = normal.dot(lightDirNormalized);
+                float cosTheta = normal.dot(lightDir);
                 // println("cosTheta: " + cosTheta);
                 if (cosTheta < 0) {
                     cosTheta = 0;//-cosTheta;
@@ -269,9 +269,6 @@ public final class Box implements IRenderableObject {
                 resultColor.b += diffuseColor.b * light._color.b * cosTheta;
             }
         }
-
-        
-
         return new Hit(pHit, normal, resultColor);
     }
 
