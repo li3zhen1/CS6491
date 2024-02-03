@@ -5,18 +5,18 @@ final class SceneGraph {
     ArrayList<Light> lights;
     ArrayList<Surface> surfaces;
 
-    HashMap<String, IRenderableObject> objectLibrary;
+    HashMap<String, Surface> objectLibrary;
     
     ArrayList<
-        IRenderableObject
+        Surface
     > secneObjectInstances;
 
     IRenderableObject getLatestObject() {
         return secneObjectInstances.get(secneObjectInstances.size() - 1);
     }
 
-    <T extends IRenderableObject>
-    void replaceLatestObject(T object) {
+    // <T extends IRenderableObject>
+    void replaceLatestObject(Surface object) {
         secneObjectInstances.set(
             secneObjectInstances.size() - 1,
             object
@@ -34,7 +34,7 @@ final class SceneGraph {
     void instantiate(String name) {
         var object = objectLibrary.get(name);
         secneObjectInstances.add(
-            new InstancedObject(
+            new InstancedSurface(
                 object,
                 getCurrentTransformCopy()
             )
@@ -48,8 +48,8 @@ final class SceneGraph {
         this.lights = new ArrayList<Light>();
         this.surfaces = new ArrayList<Surface>();
 
-        this.objectLibrary = new HashMap<String, IRenderableObject>();
-        this.secneObjectInstances = new ArrayList<IRenderableObject>();
+        this.objectLibrary = new HashMap<String, Surface>();
+        this.secneObjectInstances = new ArrayList<Surface>();
 
         this.transform.add(identityMat4x4());
     }
@@ -72,8 +72,8 @@ final class SceneGraph {
         this.transform.remove(this.transform.size() - 1);
     }
 
-    <T extends IRenderableObject> 
-    void addObject(T object) {
+    // <T extends IRenderableObject> 
+    void addObject(Surface object) {
         secneObjectInstances.add(
             // new Pair<Mat4x4, T>(
                 // getCurrentTransformCopy(),

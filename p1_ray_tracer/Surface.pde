@@ -8,14 +8,9 @@ class Surface implements IRenderableObject {
     
     IPrimitive primitive;
 
-    Surface(Color _color, Box box) {
+    Surface(Color _color, IPrimitive primitive) {
         this._color = _color;
-        this.primitive = box;
-    }
-    
-    Surface(Color _color, Mesh mesh) {
-        this._color = _color;
-        this.primitive = mesh;
+        this.primitive = primitive;
     }
 
     Color getColor() {

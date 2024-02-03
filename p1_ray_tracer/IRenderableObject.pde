@@ -116,8 +116,8 @@ final class InstancedObject<T extends IRenderableObject> implements IRenderableO
 }
 
 
-final class InstancedSurface implements IRenderableObject {
-    Surface namedObjectRef;
+final class InstancedSurface extends Surface {
+    // Surface namedObjectRef;
     PMatrix3D transform;
     PMatrix3D invertedTransform;
     Color diffuseColor;
@@ -129,7 +129,7 @@ final class InstancedSurface implements IRenderableObject {
     PartialHit _getIntersection(Ray ray, SceneGraph sg) {
 
         var transformedRay = ray.copyingTransformedBy(invertedTransform);
-        var partialHit = namedObjectRef._getIntersection(transformedRay, sg);
+        var partialHit = super._getIntersection(transformedRay, sg);
 
         if (partialHit == null) {
             return null;
@@ -195,14 +195,14 @@ final class InstancedSurface implements IRenderableObject {
     }
 
     boolean hasIntersection(Ray ray, float mint, float maxt) {
-        return namedObjectRef.hasIntersection(
+        return super.hasIntersection(
             ray.copyingTransformedBy(invertedTransform), mint, maxt
         );
     }
 
 
     public InstancedSurface(Surface namedObject, Mat4x4 transform) {
-        this.namedObjectRef = namedObject;
+        super(namedObject._color, namedObject.primitive);
         this.transform = transform.toPMatrix3D();
         this.diffuseColor = namedObject.getColor();
         var pMat = transform.toPMatrix3D();
