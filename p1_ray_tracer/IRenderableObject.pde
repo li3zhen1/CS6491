@@ -63,12 +63,12 @@ class InstancedObject<T extends IRenderableObject> implements IRenderableObject 
         for(int i = 0; i < sg.lights.size(); i++) {
             Light light = sg.lights.get(i);
             PVector lightDir = PVector.sub(light.position, pHit);
+            float length = lightDir.mag();
             if (debug_flag) {
                 println("lightDir: " + lightDir);
             }
             PVector lightDirNormalized = lightDir.normalize();
-            // println(lightDir, "-->", lightDirNormalized);
-            float length = PVector.dist(light.position, pHit);
+            // println(lightDir, "-->", lightDirNormalized);//PVector.dist(light.position, pHit);
             Ray shadowRay = new Ray(pHit, lightDirNormalized /*lightDir.length()*/);
             boolean hasOcclusionTowardsThisRay = false;
             for(int j = 0; j < sg.secneObjectInstances.size(); j++) {
@@ -82,7 +82,7 @@ class InstancedObject<T extends IRenderableObject> implements IRenderableObject 
                 float cosTheta = normal.dot(lightDirNormalized);
                 // println("cosTheta: " + cosTheta);
                 if (cosTheta < 0) {
-                    cosTheta = -cosTheta;
+                    cosTheta = 0;// -cosTheta;
                 }
                 resultColor.r += diffuseColor.r * light._color.r * cosTheta;
                 resultColor.g += diffuseColor.g * light._color.g * cosTheta;

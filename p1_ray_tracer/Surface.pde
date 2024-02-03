@@ -199,11 +199,11 @@ final class Surface implements IRenderableObject {
             Light light = sg.lights.get(i);
             PVector lightDir = PVector.sub(light.position, pHit);
 
+            float length = lightDir.mag();
             
             PVector lightDirNormalized = lightDir.normalize();
 
 
-            float length = lightDir.mag();
 
             Ray shadowRay = new Ray(pHit, lightDirNormalized /*lightDir.length()*/);
             boolean hasOcclusionTowardsThisRay = false;

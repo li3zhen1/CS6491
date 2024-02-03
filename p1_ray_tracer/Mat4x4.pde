@@ -2,8 +2,7 @@
 final class Mat4x4 {
 
     PMatrix3D toPMatrix3D() {
-        PMatrix3D mat = new PMatrix3D();
-        mat.set(
+        PMatrix3D mat = new PMatrix3D(
             this.mat[0][0], this.mat[0][1], this.mat[0][2], this.mat[0][3],
             this.mat[1][0], this.mat[1][1], this.mat[1][2], this.mat[1][3],
             this.mat[2][0], this.mat[2][1], this.mat[2][2], this.mat[2][3],
