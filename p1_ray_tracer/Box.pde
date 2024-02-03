@@ -1,4 +1,4 @@
-final class Box implements IRenderableObject {
+final class Box implements IPrimitive {
     PVector pMin;
     PVector pMax;
 
@@ -208,7 +208,7 @@ final class Box implements IRenderableObject {
         //     Ray shadowRay = new Ray(pHit, lightDirNormalized /*lightDir.length()*/);
         //     boolean hasOcclusionTowardsThisRay = false;
         //     for(int j = 0; j < sg.secneObjectInstances.size(); j++) {
-        //         IRenderableObject object = sg.secneObjectInstances.get(j);
+        //         IPrimitive object = sg.secneObjectInstances.get(j);
         //         if (object.hasIntersection(shadowRay, EPSILON, length /*lightDir.length()*/)) {
         //             hasOcclusionTowardsThisRay = true;
         //             break;
@@ -249,7 +249,7 @@ final class Box implements IRenderableObject {
             Ray shadowRay = new Ray(pHit, lightDir/*lightDir.length()*/);
             boolean hasOcclusionTowardsThisRay = false;
             for(int j = 0; j < sg.secneObjectInstances.size(); j++) {
-                IRenderableObject object = sg.secneObjectInstances.get(j);
+                IPrimitive object = sg.secneObjectInstances.get(j);
                 if (object.hasIntersection(shadowRay, EPSILON, length /*lightDir.length()*/)) {
                     hasOcclusionTowardsThisRay = true;
                     break;

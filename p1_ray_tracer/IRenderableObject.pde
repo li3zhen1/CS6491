@@ -1,22 +1,19 @@
+
+
+
 public interface IPrimitive {
-    PartialHit getIntersection(Ray ray, SceneGraph sg);
-    boolean hasIntersection(Ray ray, float mint, float maxt);
-}
-
-
-public interface IRenderableObject {
     Color getColor();
     PartialHit _getIntersection(Ray ray, SceneGraph sg);
     Hit getIntersection(Ray ray, SceneGraph sg);
     boolean hasIntersection(Ray ray, float mint, float maxt);
 }
 
-final class NamedObject<T extends IRenderableObject> {
+final class NamedObject<T extends IPrimitive> {
     String name; 
     T object;
 }
 
-final class InstancedObject<T extends IRenderableObject> implements IRenderableObject {
+final class InstancedObject<T extends IPrimitive> implements IPrimitive {
     T namedObjectRef;
     PMatrix3D transform;
     PMatrix3D invertedTransform;

@@ -1,5 +1,9 @@
-final class Surface implements IRenderableObject {
+
+
+
+final class Surface implements IPrimitive {
     Color _color;
+    boolean accelerated = false;
     Mesh mesh;
     
     Surface(Color _color) {
@@ -10,62 +14,6 @@ final class Surface implements IRenderableObject {
     Color getColor() {
         return _color;
     }
-
-    float _intersectionWithTriangleStartingAt(
-        Ray ray, 
-        int triangleIndex
-    ) {
-        
-        var v1 = mesh.vertices.get(triangleIndex * 3);
-        var v2 = mesh.vertices.get(triangleIndex * 3 + 1);
-        var v3 = mesh.vertices.get(triangleIndex * 3 + 2);
-        var e1 = PVector.sub(v2, v1);
-        var e2 = PVector.sub(v3, v1);
-
-        var h = ray.direction.cross(e2);
-        var a = e1.dot(h);
-
-        if (a > -EPSILON && a < EPSILON) {
-            return Float.MAX_VALUE;
-        }
-
-        var f = 1.0 / a;
-        var s = PVector.sub(ray.origin, v1);
-        var u = f * s.dot(h);
-
-        if (u < 0.0 || u > 1.0) {
-            return Float.MAX_VALUE;
-        }
-
-        var q = s.cross(e1);
-        var v = f * PVector.dot(ray.direction, q);
-
-        if (v < 0.0 || u + v > 1.0) {
-            return Float.MAX_VALUE;
-        }
-
-        var t = f * PVector.dot(e2, q);
-
-        return t;
-
-        // if (debug_flag) {
-        //     println("t: " + t);
-        // }
-
-        // if (t > EPSILON) {
-        //     var point = PVector.add(ray.origin, PVector.mult(ray.direction, t));
-        //     var normal = e1.cross(e2).normalize();
-        //     if (ray.direction.dot(normal) > 0) {
-        //         normal.mult(-1);
-        //     }
-        //     return new PartialHit(point, normal, t);
-        // } else {
-        //     return null;
-        // }
-    }
-
-
-
 
     PartialHit _getIntersection(Ray ray, SceneGraph sg) {
         float closestHitT = Float.MAX_VALUE;
@@ -215,38 +163,3 @@ final class Surface implements IRenderableObject {
     }
 }
 
-
-// static final class _Surface implements IRenderableObject {
-//     enum SurfaceKind {
-//         // EMPTY,
-//         MESH,
-//         BOX
-//     };
-
-//     SurfaceKind _kind;
-
-//     Color _color;
-
-
-//     Mesh mesh = null;
-//     Box box = null;
-
-//     _Surface(Color _color) {
-//         this._color = _color;
-//         this.mesh = new Mesh();
-//         this._kind = SurfaceKind.MESH;
-//     }
-
-//     void convertToBox(Box box) {
-//         this.box = box;
-//         this._kind = SurfaceKind.BOX;
-//     }
-    
-//     Hit getIntersection(Ray ray, SceneGraph sg) {
-//         return null;
-//     }
-
-//     boolean hasIntersection(Ray ray, float mint, float maxt) {
-//         return false;
-//     }
-// }

@@ -12,7 +12,7 @@ final class Ray {
 
 
     // Check if the ray intersects with the surface, and return the hit point
-    public Hit intersect(Surface surface, int excludingTriangleIndex) {
+    final Hit intersect(Surface surface, int excludingTriangleIndex) {
 
         Pair<PVector, PVector> result = null;
 
