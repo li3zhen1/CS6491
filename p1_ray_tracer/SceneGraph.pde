@@ -11,7 +11,7 @@ final class SceneGraph {
         Surface
     > secneObjectInstances;
 
-    IRenderableObject getLatestObject() {
+    Surface getLatestObject() {
         return secneObjectInstances.get(secneObjectInstances.size() - 1);
     }
 

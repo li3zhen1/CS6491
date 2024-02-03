@@ -1,9 +1,6 @@
 final class Mesh implements IPrimitive {
-    ArrayList<PVector> vertices;
+    final ArrayList<PVector> vertices;
 
-    Mesh(ArrayList<PVector> vertices) {
-        vertices = new ArrayList<PVector>();
-    }
 
     Mesh() {
         vertices = new ArrayList<PVector>();

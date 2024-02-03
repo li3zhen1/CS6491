@@ -1,6 +1,6 @@
 final class Light {
-    PVector position;
-    Color _color;
+    final PVector position;
+    final Color _color;
     
  
     Light(PVector position, Color _color) { 

@@ -18,8 +18,8 @@ final class NamedObject<T extends IRenderableObject> {
 
 final class InstancedObject<T extends IRenderableObject> implements IRenderableObject {
     T namedObjectRef;
-    PMatrix3D transform;
-    PMatrix3D invertedTransform;
+    final PMatrix3D transform;
+    final PMatrix3D invertedTransform;
     Color diffuseColor;
 
     Color getColor() {
@@ -117,14 +117,9 @@ final class InstancedObject<T extends IRenderableObject> implements IRenderableO
 
 
 final class InstancedSurface extends Surface {
-    // Surface namedObjectRef;
-    PMatrix3D transform;
-    PMatrix3D invertedTransform;
-    Color diffuseColor;
 
-    Color getColor() {
-        return diffuseColor;
-    }
+    final PMatrix3D transform;
+    final PMatrix3D invertedTransform;
 
     PartialHit _getIntersection(Ray ray, SceneGraph sg) {
 
@@ -135,18 +130,12 @@ final class InstancedSurface extends Surface {
             return null;
         }
 
-        // // partialHit.normal = transform.mult(partialHit.normal, null).normalize();
         var normalTarget = transform.mult(
             PVector.add(partialHit.position, partialHit.normal), 
             null
         );
         partialHit.position = transform.mult(partialHit.position, null);
         partialHit.normal = PVector.sub(normalTarget, partialHit.position).normalize();
-
-
-        // if (debug_flag) {
-        //     partialHit.dump();
-        // }
 
         return partialHit;
     }
@@ -185,9 +174,9 @@ final class InstancedSurface extends Surface {
                 if (cosTheta < 0) {
                     cosTheta = 0;// -cosTheta;
                 }
-                resultColor.r += diffuseColor.r * light._color.r * cosTheta;
-                resultColor.g += diffuseColor.g * light._color.g * cosTheta;
-                resultColor.b += diffuseColor.b * light._color.b * cosTheta;
+                resultColor.r += super._color.r * light._color.r * cosTheta;
+                resultColor.g += super._color.g * light._color.g * cosTheta;
+                resultColor.b += super._color.b * light._color.b * cosTheta;
             }
         }
 
@@ -204,7 +193,7 @@ final class InstancedSurface extends Surface {
     public InstancedSurface(Surface namedObject, Mat4x4 transform) {
         super(namedObject._color, namedObject.primitive);
         this.transform = transform.toPMatrix3D();
-        this.diffuseColor = namedObject.getColor();
+        // this.diffuseColor = namedObject.getColor();
         var pMat = transform.toPMatrix3D();
         if (!pMat.invert()) {
             throw new RuntimeException("Matrix not invertible");
