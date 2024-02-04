@@ -7,7 +7,19 @@ boolean debug_flag = false;
 
 ParsingState pState = ParsingState.GLOBAL;
 SceneGraph scene = new SceneGraph();
+int timer;  // global variable
 
+void reset_timer()
+{
+  timer = millis();
+}
+void print_timer()
+{
+  int new_timer = millis();
+  int diff = new_timer - timer;
+  float seconds = diff / 1000.0;
+  println ("timer = " + seconds);
+}
 void setup() {
     size(300, 300);
     noStroke();
@@ -232,8 +244,7 @@ void reset_scene() {
 
 // This is where you should put your code for creating eye rays and tracing them.
 void draw_scene() {
-    int timer = millis();
-    println("\n\n============ Rendering ........ ============ ");
+    reset_timer();
     PVector eye = new PVector(0, 0, 0);
 
     float widthFloat = (float) width;
@@ -250,8 +261,8 @@ void draw_scene() {
             // Have your routines (like ray/triangle intersection)
             // print information when this flag is set.
             debug_flag = false;
-            if (x == 164 && y == 141)
-                debug_flag = true;
+            // if (x == 164 && y == 141)
+            //     debug_flag = true;
             // if (x == 112 && y == 112)
             //     debug_flag = true;
             // if (x == 148 && y == 60)
@@ -298,12 +309,7 @@ void draw_scene() {
             }
         }
     }
-    println("============ Rendering finished ============ ");
-    
-    int new_timer = millis();
-    int diff = new_timer - timer;
-    float seconds = diff / 1000.0;
-    println ("timer = " + seconds);
+    print_timer();
 }
 
 // prints mouse location clicks, for help in debugging

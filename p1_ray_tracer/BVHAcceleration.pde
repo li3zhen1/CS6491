@@ -1,79 +1,184 @@
+enum Axis {
+    X, Y, Z;
+}
 
-final class KDNode implements IPrimitive {
 
-    Box getBoundingBox() {
-        return bound;
+Box[] splitBox(Box box, Axis axis, float split) {
+    Box[] result = new Box[2];
+    if (axis == Axis.X) {
+        float x = split;
+        result[0] = new Box(box.pMin, new PVector(x, box.pMax.y, box.pMax.z));
+        result[1] = new Box(new PVector(x, box.pMin.y, box.pMin.z), box.pMax);
+    } else if (axis == Axis.Y) {
+        float y = split;
+        result[0] = new Box(box.pMin, new PVector(box.pMax.x, y, box.pMax.z));
+        result[1] = new Box(new PVector(box.pMin.x, y, box.pMin.z), box.pMax);
+    } else {
+        float z = split;
+        result[0] = new Box(box.pMin, new PVector(box.pMax.x, box.pMax.y, z));
+        result[1] = new Box(new PVector(box.pMin.x, box.pMin.y, z), box.pMax);
     }
+    return result;
+}
 
 
-    final ArrayList<IPrimitive> primitive;
-    Box bound;
+final class BVHAcceleration<T extends IPrimitive> implements IPrimitive {
+    final Box box;
+    BVHAcceleration<T> left;
+    BVHAcceleration<T> right;
+    final ArrayList<T> primitives;
     final int depth;
 
-    KDNode(int depth) {
-        this.depth = depth;
-        this.bound = null;
-        this.primitive = new ArrayList<IPrimitive>();
+
+    Box getBoundingBox() {
+        return box;
     }
 
-    KDNode(ArrayList<IPrimitive> primitive, Box bound, int depth) {
-        this.primitive = primitive;
-        this.bound = bound;
+    BVHAcceleration(Box box, BVHAcceleration left, BVHAcceleration right, int depth) {
+        this.box = box;
+        this.left = left;
+        this.right = right;
         this.depth = depth;
+        this.primitives = null;
     }
 
-    KDNode children[]; 
+    BVHAcceleration(Box box, ArrayList<T> primitives, int depth) {
+        this.box = box;
+        this.left = null;
+        this.right = null;
+        this.depth = depth;
+        this.primitives = primitives;
+        // println("depth: " + depth + " primitives: " + primitives.size() + " box: " + box);
+    }
 
-    void split() {
-        if (primitive.size() <= 1) {
-            return;
+    void recursiveSplit() {
+        var splitAxis = Axis.X;
+
+        float x = box.pMax.x - box.pMin.x;
+        float y = box.pMax.y - box.pMin.y;
+        float z = box.pMax.z - box.pMin.z;
+        if (y > x && y > z) {
+            splitAxis = Axis.Y;
+        } else if (z > x && z > y) {
+            splitAxis = Axis.Z;
         }
-        children = new KDNode[8];
-        for (int i = 0; i < 8; i++) {
-            children[i] = new KDNode(depth+1);
+
+        if (primitives.size() > 1 && depth <30) {
+            split(splitAxis);
+            if (left != null && left.primitives.size() > 1) {
+                left.recursiveSplit();
+            }
+            if (right != null && right.primitives.size() > 1) {
+                right.recursiveSplit();
+            }
         }
-        for (int i = 0; i < primitive.size(); i++) {
-            int index = 0;
-            IPrimitive p = primitive.get(i);
-            var box = p.getBoundingBox();
-            if (box.centroid.x > bound.centroid.x) {
-                index |= 1;
-            }
-            if (box.centroid.y > bound.centroid.y) {
-                index |= 2;
-            }
-            if (box.centroid.z > bound.centroid.z) {
-                index |= 4;
-            }
-            children[index].primitive.add(p);
-            if (children[index].bound == null) {
-                children[index].bound = box;
+    }
+
+    void split(Axis axis) {
+        
+        float split = 0;
+        if (axis == Axis.X) {
+            split = (box.pMin.x + box.pMax.x) / 2;
+        } else if (axis == Axis.Y) {
+            split = (box.pMin.y + box.pMax.y) / 2;
+        } else {
+            split = (box.pMin.z + box.pMax.z) / 2;
+        }
+
+        ArrayList<T> leftPrimitives = new ArrayList<T>();
+        ArrayList<T> rightPrimitives = new ArrayList<T>();
+        for (T primitive : primitives) {
+            var centroid = primitive.getBoundingBox().centroid;
+            if (axis == Axis.X) {
+                if (centroid.x < split) {
+                    leftPrimitives.add(primitive);
+                } else {
+                    rightPrimitives.add(primitive);
+                }
+            } else if (axis == Axis.Y) {
+                if (centroid.y < split) {
+                    leftPrimitives.add(primitive);
+                } else {
+                    rightPrimitives.add(primitive);
+                }
             } else {
-                children[index].bound = union(children[index].bound, box);
+                if (centroid.z < split) {
+                    leftPrimitives.add(primitive);
+                } else {
+                    rightPrimitives.add(primitive);
+                }
             }
         }
-        for (int i = 0; i < 8; i++) {
-            if (children[i].primitive.size() > 1 && depth < 20) {
-                children[i].split();
+
+        if (leftPrimitives.size() != 0) {
+            Box leftBox = leftPrimitives.get(0).getBoundingBox();
+            for (T primitive : leftPrimitives) {
+                leftBox = union(leftBox, primitive.getBoundingBox());
             }
+            left = new BVHAcceleration(leftBox, leftPrimitives, depth + 1);
+        }
+        else {
+            
+        }
+
+        if (rightPrimitives.size() != 0) {
+            Box rightBox = rightPrimitives.get(0).getBoundingBox();
+            for (T primitive : rightPrimitives) {
+                rightBox = union(rightBox, primitive.getBoundingBox());
+            }
+            right = new BVHAcceleration(rightBox, rightPrimitives, depth + 1);
+        }
+        else {
+            right = null;
+        }
+
+        primitives.clear();
+    }
+
+
+    void dump() {
+        for (int i = 0; i < depth; i++) {
+            System.out.print("  ");
+        }
+        System.out.print("Depth: " + depth + " -- ");
+        box.dump();
+        if (primitives != null && primitives.size() > 0) {
+            for (T primitive : primitives) {
+                for (int i = 0; i < depth; i++) {
+                    System.out.print("  ");
+                }
+                System.out.println(primitive);
+            }
+        } else {
+            if (left != null)
+            left.dump();
+            if (right != null)
+            right.dump();
         }
     }
+
 
     boolean hasIntersection(Ray ray, float mint, float maxt) {
-        if (!bound.hasIntersection(ray, mint, maxt)) {
+        var possiblyHasIntersection = box.hasIntersection(ray, 0, Float.MAX_VALUE);
+        if (!possiblyHasIntersection) {
             return false;
         }
-        if (primitive.size() == 1 || depth >= 20 || children == null) {
-            for (int i = 0; i < primitive.size(); i++) {
-                if (primitive.get(i).hasIntersection(ray, mint, maxt)) {
+        if (right == null && left == null) {
+            for (T primitive : primitives) {
+                if (primitive.hasIntersection(ray, mint, maxt)) {
                     return true;
                 }
             }
             return false;
         }
         
-        for (int i = 0; i < 8; i++) {
-            if (children[i].hasIntersection(ray, mint, maxt)) {
+        if (left != null) {
+            if (left.hasIntersection(ray, mint, maxt) ) {
+                return true;
+            }
+        }
+        if (right != null) {
+            if (right.hasIntersection(ray, mint, maxt)) {
                 return true;
             }
         }
@@ -81,33 +186,46 @@ final class KDNode implements IPrimitive {
     }
 
     PartialHit _getIntersection(Ray ray, SceneGraph sg) {
-        if (!bound.hasIntersection(ray, 0, Float.MAX_VALUE) ) {
+        var possiblyHasIntersection = box.hasIntersection(ray, 0, Float.MAX_VALUE);
+        if (!possiblyHasIntersection) {
             return null;
         }
-        if (primitive.size() == 1 || depth >= 20 || children == null) {
-            PartialHit closestHit = null;
-            for (int i = 0; i < primitive.size(); i++) {
-                var ph = primitive.get(i)._getIntersection(ray, sg);
-                if (ph != null) {
-                    if (closestHit == null || ph.t0 < closestHit.t0) {
-                        closestHit = ph;
+        if (right == null && left == null) {
+            PartialHit hit = null;
+            for (T primitive : primitives) {
+                var newHit = primitive._getIntersection(ray, sg);
+                if (newHit != null) {
+                    if (hit == null || newHit.t0 < hit.t0) {
+                        hit = newHit;
                     }
                 }
             }
-            return closestHit;
+            return hit;
         }
-        
-        PartialHit closestHit = null;
-        for (int i = 0; i < 8; i++) {
-            var ph = children[i]._getIntersection(ray, sg);
-                if (ph != null) {
-                    if (closestHit == null || ph.t0 < closestHit.t0) {
-                        closestHit = ph;
-                    }
-                }
+        PartialHit leftHit = null;
+        PartialHit rightHit = null;
+
+        if (left != null) {
+            leftHit = left._getIntersection(ray, sg);
         }
-        return null;
+        if (right != null) {
+            rightHit = right._getIntersection(ray, sg);
+        }
+
+        if (leftHit == null && rightHit == null) {
+            return null;
+        }
+        if (leftHit == null) {
+            return rightHit;
+        }
+        if (rightHit == null) {
+            return leftHit;
+        }
+
+        if (leftHit.t0 < rightHit.t0) {
+            return leftHit;
+        } else {
+            return rightHit;
+        }
     }
-
 }
-

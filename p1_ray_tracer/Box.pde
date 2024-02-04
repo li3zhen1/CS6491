@@ -17,6 +17,8 @@ Box createBoxChecked(PVector pMin, PVector pMax) {
     return new Box(pMin, pMax);
 }
 
+
+
 final class Box implements IPrimitive {
     final PVector pMin;
     final PVector pMax;
@@ -238,9 +240,17 @@ final class Box implements IPrimitive {
     }
 
 
+
+
 }
 
     Box union(Box b1, Box b2) {
-        return createBoxChecked(new PVector(min(b1.pMin.x, b2.pMin.x), min(b1.pMin.y, b2.pMin.y), min(b1.pMin.z, b2.pMin.z)),
-                               new PVector(max(b1.pMax.x, b2.pMax.x), max(b1.pMax.y, b2.pMax.y), max(b1.pMax.z, b2.pMax.z)));
+        Box result = new Box(b1.pMin, b1.pMax);
+        result.pMin.x = min(b1.pMin.x, b2.pMin.x);
+        result.pMin.y = min(b1.pMin.y, b2.pMin.y);
+        result.pMin.z = min(b1.pMin.z, b2.pMin.z);
+        result.pMax.x = max(b1.pMax.x, b2.pMax.x);
+        result.pMax.y = max(b1.pMax.y, b2.pMax.y);
+        result.pMax.z = max(b1.pMax.z, b2.pMax.z);
+        return result;
     }

@@ -13,9 +13,9 @@ final class Triangle implements IPrimitive {
             Math.min(v1.z, Math.min(v2.z, v3.z))
         );
         var max = new PVector(
-            Math.max(v1.x, Math.max(v2.x, v3.x)),
-            Math.max(v1.y, Math.max(v2.y, v3.y)),
-            Math.max(v1.z, Math.max(v2.z, v3.z))
+            Math.max(v1.x, Math.max(v2.x, v3.x)) + EPSILON,
+            Math.max(v1.y, Math.max(v2.y, v3.y)) + EPSILON,
+            Math.max(v1.z, Math.max(v2.z, v3.z)) + EPSILON
         );
         return new Box(min, max);
     }
@@ -27,19 +27,11 @@ final class Triangle implements IPrimitive {
     }
 
     PartialHit _getIntersection(Ray ray, SceneGraph sg) {
-        float closestHitT = Float.MAX_VALUE;
         
-        PVector _e1 = new PVector();
-        PVector _e2 = new PVector();
         PartialHit result = null;
         var rayDirection = ray.direction;
         var rayOrigin = ray.origin;
         
-        // for (int i = 0; i < mesh.triangleCount(); i++) {
-            
-        //     var v1 = mesh.vertices.get(i * 3);
-        //     var v2 = mesh.vertices.get(i * 3 + 1);
-        //     var v3 = mesh.vertices.get(i * 3 + 2);
             var e1 = 
             PVector.sub(v2, v1);
             var e2 = 
@@ -72,23 +64,19 @@ final class Triangle implements IPrimitive {
         // }
         
         if (hitT > EPSILON && hitT < Float.MAX_VALUE) {
-            var point = PVector.add(rayOrigin, PVector.mult(rayDirection, closestHitT));
-            var normal = _e1.cross(_e2).normalize();
+            var point = PVector.add(rayOrigin, PVector.mult(rayDirection, hitT));
+            var normal = e1.cross(e2).normalize();
             if (rayDirection.dot(normal) > 0) {
                 normal.mult(-1);
             }
-            return new PartialHit(point, normal, closestHitT);
+            return new PartialHit(point, normal, hitT);
         } else {
             return null;
         }
     }
 
     boolean hasIntersection(Ray ray, float mint, float maxt) {
-        // for (int i = 0; i < mesh.triangleCount(); i++) {
-            
-            // var v1 = mesh.vertices.get(i * 3);
-            // var v2 = mesh.vertices.get(i * 3 + 1);
-            // var v3 = mesh.vertices.get(i * 3 + 2);
+        
             var e1 = PVector.sub(v2, v1);
             var e2 = PVector.sub(v3, v1);
 
@@ -122,7 +110,11 @@ final class Triangle implements IPrimitive {
                 return true;
             }
             return false;
-        // }
-        // return false;
+            
+    }
+
+    void dump(int indent) {
+        String prefix = " ".repeat(indent);
+        println(prefix + "Triangle" + " " + v1 + " " + v2 + " " + v3);
     }
 }

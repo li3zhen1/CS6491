@@ -11,23 +11,23 @@ class RenderableObject {
     void accelerate() {
         if (primitive instanceof Mesh) {
             Mesh mesh = (Mesh)primitive;
-            var triangles = new ArrayList<IPrimitive>(mesh.triangleCount());
+            var triangles = new ArrayList<Triangle>(mesh.triangleCount());
             for (int i = 0; i < mesh.triangleCount(); i++) {
                 var v1 = mesh.vertices.get(i * 3);
                 var v2 = mesh.vertices.get(i * 3 + 1);
                 var v3 = mesh.vertices.get(i * 3 + 2);
                 triangles.add(new Triangle(v1, v2, v3));
             }
-            var ga = new KDNode(
-                triangles,
-                new Box(mesh.pMin,
+            var ga = new BVHAcceleration<Triangle>(
+                                new Box(mesh.pMin,
                 mesh.pMax),
+                triangles,
                 0
             );
+            ga.recursiveSplit();
             // ga.dump();
-
             primitive = ga;
-            
+            println("accelerated");
         }
     }
 
