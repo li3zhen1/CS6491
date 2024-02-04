@@ -104,18 +104,20 @@ void interpreter(String file) {
             // println(workingMesh);
 
 
-            scene.surfaces.add(surface);
+            // scene.surfaces.add(surface);
+            pState = ParsingState.SURFACE;
             scene.addObject(surface);
 
         } else if (token[0].equals("begin")) {
-            if (pState != ParsingState.GLOBAL) {
+            if (pState != ParsingState.SURFACE) {
                 println("Error: 'begin' without 'surface'");
             } else {
-                pState = ParsingState.TRIANGLE;
+                pState = ParsingState.SURFACE_DIRTY;
             }
         } else if (token[0].equals("vertex")) {
 
-            if (pState != ParsingState.TRIANGLE) {
+            if (pState != ParsingState.SURFACE_DIRTY) {
+                println(pState);
                 println("Error: 'vertex' without 'surface'");
             } else {
                 float x = float(token[1]);
@@ -129,12 +131,13 @@ void interpreter(String file) {
                 else {
                     workingMesh.addVertex(vertex);
                 }
+                pState = ParsingState.SURFACE_DIRTY;
             }
         } else if (token[0].equals("end")) {
-            if (pState != ParsingState.TRIANGLE) {
+            if (pState != ParsingState.SURFACE_DIRTY) {
                 println("Error: 'end' without 'surface'");
             } else {
-                pState = ParsingState.GLOBAL;
+                pState = ParsingState.SURFACE;
             }
         } else if (token[0].equals("render")) {
             draw_scene();   // this is where you should perform the scene rendering
@@ -169,6 +172,8 @@ void interpreter(String file) {
         }
          // box  xmin ymin zmin  xmax ymax zmax
         else if (token[0].equals("box")) {
+
+
             float xmin = float(token[1]);
             float ymin = float(token[2]);
             float zmin = float(token[3]);
@@ -187,15 +192,18 @@ void interpreter(String file) {
             scene.replaceLatestObject(
                 surface
             );
+            pState = ParsingState.SURFACE_DIRTY;
             
         } 
         else if (token[0].equals("named_object")) {
             String name = token[1];
             scene.moveLatestObjectToLibraryWithName(name);
+            pState = ParsingState.SURFACE_DIRTY;
         }
         else if (token[0].equals("instance")) {
             String name = token[1];
             scene.instantiate(name);
+            pState = ParsingState.SURFACE_DIRTY;
         }
         else if (token[0].equals("begin_accel")) {
 

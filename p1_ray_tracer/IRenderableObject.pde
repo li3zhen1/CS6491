@@ -14,6 +14,8 @@ public interface IRenderableObject {
 
 final class InstancedObject extends RenderableObject {
 
+    // final Color _color;
+
     final PMatrix3D transform;
     final PMatrix3D invertedTransform;
 
@@ -85,11 +87,30 @@ final class InstancedObject extends RenderableObject {
         );
     }
 
+    public InstancedObject(
+        RenderableObject namedObject, 
+        Mat4x4 transform,
+        Color _color
+    ) {
+        super(_color, namedObject.primitive);
+        this.transform = transform.toPMatrix3D();
+        
+        var pMat = transform.toPMatrix3D();
+        if (!pMat.invert()) {
+            throw new RuntimeException("Matrix not invertible");
+        }
+        this.invertedTransform = pMat;
 
-    public InstancedObject(RenderableObject namedObject, Mat4x4 transform) {
+        invertedTransform.print();
+    }
+
+    public InstancedObject(
+        RenderableObject namedObject, 
+        Mat4x4 transform
+    ) {
         super(namedObject._color, namedObject.primitive);
         this.transform = transform.toPMatrix3D();
-        // this.diffuseColor = namedObject.getColor();
+        
         var pMat = transform.toPMatrix3D();
         if (!pMat.invert()) {
             throw new RuntimeException("Matrix not invertible");

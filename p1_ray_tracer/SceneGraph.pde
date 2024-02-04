@@ -32,12 +32,24 @@ final class SceneGraph {
 
     void instantiate(String name) {
         var object = objectLibrary.get(name);
-        secneObjectInstances.add(
-            new InstancedObject(
-                object,
-                getCurrentTransformCopy()
-            )
-        );
+        if (pState == ParsingState.SURFACE) {
+            secneObjectInstances.add(
+                new InstancedObject(
+                    object,
+                    getCurrentTransformCopy(),
+                    getLatestObject()._color
+                )
+            );
+        }
+        else {
+
+            secneObjectInstances.add(
+                new InstancedObject(
+                    object,
+                    getCurrentTransformCopy()
+                )
+            );
+        }
     }
 
 
