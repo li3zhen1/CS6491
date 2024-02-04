@@ -4,9 +4,32 @@
 class RenderableObject {
     Color _color;
 
-    boolean accelerated = false;
+    // boolean accelerated = false;
     
     IPrimitive primitive;
+
+    void accelerate() {
+        if (primitive instanceof Mesh) {
+            Mesh mesh = (Mesh)primitive;
+            var triangles = new ArrayList<IPrimitive>(mesh.triangleCount());
+            for (int i = 0; i < mesh.triangleCount(); i++) {
+                var v1 = mesh.vertices.get(i * 3);
+                var v2 = mesh.vertices.get(i * 3 + 1);
+                var v3 = mesh.vertices.get(i * 3 + 2);
+                triangles.add(new Triangle(v1, v2, v3));
+            }
+            var ga = new KDNode(
+                triangles,
+                new Box(mesh.pMin,
+                mesh.pMax),
+                0
+            );
+            // ga.dump();
+
+            primitive = ga;
+            
+        }
+    }
 
     RenderableObject(Color _color, IPrimitive primitive) {
         this._color = _color;

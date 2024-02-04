@@ -6,6 +6,20 @@ final class Triangle implements IPrimitive {
     PVector v2;
     PVector v3;
 
+    Box getBoundingBox() {
+        var min = new PVector(
+            Math.min(v1.x, Math.min(v2.x, v3.x)),
+            Math.min(v1.y, Math.min(v2.y, v3.y)),
+            Math.min(v1.z, Math.min(v2.z, v3.z))
+        );
+        var max = new PVector(
+            Math.max(v1.x, Math.max(v2.x, v3.x)),
+            Math.max(v1.y, Math.max(v2.y, v3.y)),
+            Math.max(v1.z, Math.max(v2.z, v3.z))
+        );
+        return new Box(min, max);
+    }
+
     Triangle(PVector v1, PVector v2, PVector v3) {
         this.v1 = v1;
         this.v2 = v2;

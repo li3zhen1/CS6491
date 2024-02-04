@@ -209,7 +209,8 @@ void interpreter(String file) {
 
 
         } else if (token[0].equals("end_accel")) {
-
+            var latestObject = scene.getLatestObject();
+            latestObject.accelerate();
         }
         else if (token[0].equals("push")) {
             scene.push();
@@ -249,8 +250,8 @@ void draw_scene() {
             // Have your routines (like ray/triangle intersection)
             // print information when this flag is set.
             debug_flag = false;
-            // if (x == 80 && y == 81)
-            //     debug_flag = true;
+            if (x == 164 && y == 141)
+                debug_flag = true;
             // if (x == 112 && y == 112)
             //     debug_flag = true;
             // if (x == 148 && y == 60)

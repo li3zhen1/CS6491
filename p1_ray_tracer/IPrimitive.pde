@@ -2,6 +2,8 @@
 public interface IPrimitive {
     PartialHit _getIntersection(Ray ray, SceneGraph sg);
     boolean hasIntersection(Ray ray, float mint, float maxt);
+
+    Box getBoundingBox();
 }
 
 public interface IRenderableObject {

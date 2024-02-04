@@ -3,6 +3,9 @@ final class Mesh implements IPrimitive {
     PVector pMin;
     PVector pMax;
 
+    Box getBoundingBox() {
+        return new Box(pMin, pMax);
+    }
 
     Mesh() {
         vertices = new ArrayList<PVector>();

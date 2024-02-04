@@ -28,6 +28,12 @@ final class Box implements IPrimitive {
         this.centroid = new PVector((pMin.x + pMax.x) / 2, (pMin.y + pMax.y) / 2, (pMin.z + pMax.z) / 2);
     }
 
+    Box getBoundingBox() {
+        return this;
+    }
+
+
+
     final boolean hasIntersection(Ray ray, float mint, float maxt) {
         float t0 = mint;
         float t1 = maxt;
@@ -191,7 +197,7 @@ final class Box implements IPrimitive {
             }
         }
         
-        return new PartialHit(pHit, normal, t0);
+        return new PartialHit(pHit, normal, t0, t1);
 
         // var resultColor = new Color(0.0, 0.0, 0.0);
         
@@ -227,5 +233,14 @@ final class Box implements IPrimitive {
 
     } 
 
+    void dump() {
+        println("Box: " + pMin + " " + pMax);
+    }
+
 
 }
+
+    Box union(Box b1, Box b2) {
+        return createBoxChecked(new PVector(min(b1.pMin.x, b2.pMin.x), min(b1.pMin.y, b2.pMin.y), min(b1.pMin.z, b2.pMin.z)),
+                               new PVector(max(b1.pMax.x, b2.pMax.x), max(b1.pMax.y, b2.pMax.y), max(b1.pMax.z, b2.pMax.z)));
+    }
