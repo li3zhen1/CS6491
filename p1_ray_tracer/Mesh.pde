@@ -1,5 +1,7 @@
 final class Mesh implements IPrimitive {
     final ArrayList<PVector> vertices;
+    PVector pMin;
+    PVector pMax;
 
 
     Mesh() {
@@ -8,15 +10,40 @@ final class Mesh implements IPrimitive {
 
     void addVertex(PVector vertex) {
         vertices.add(vertex);
+        if (vertices.size() == 1) {
+            pMin = vertex.copy();
+            pMax = vertex.copy();
+        } else {
+            if (vertex.x < pMin.x) {
+                pMin.x = vertex.x;
+            }
+            else if (vertex.x > pMax.x) {
+                pMax.x = vertex.x;
+            }
+
+            if (vertex.y < pMin.y) {
+                pMin.y = vertex.y;
+            }
+            else if (vertex.y > pMax.y) {
+                pMax.y = vertex.y;
+            }
+
+            if (vertex.z < pMin.z) {
+                pMin.z = vertex.z;
+            }
+            else if (vertex.z > pMax.z) {
+                pMax.z = vertex.z;
+            }
+        }
     }
 
     PVector getVertex(int index) {
         return vertices.get(index);
     }
 
-    void setVertex(int index, PVector vertex) {
-        vertices.set(index, vertex);
-    }
+    // void setVertex(int index, PVector vertex) {
+    //     vertices.set(index, vertex);
+    // }
 
     int triangleCount() {
         return vertices.size() / 3;
