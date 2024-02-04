@@ -117,8 +117,8 @@ final class BVHAcceleration<T extends IPrimitive> implements IPrimitive {
             }
             left = new BVHAcceleration(leftBox, leftPrimitives, depth + 1);
         }
-        else {
-            
+        else if {
+            left = null;
         }
 
         if (rightPrimitives.size() != 0) {
