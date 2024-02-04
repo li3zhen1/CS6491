@@ -1,34 +1,42 @@
+Box createBoxChecked(PVector pMin, PVector pMax) {
+    if (pMin.x > pMax.x) {
+        float temp = pMin.x;
+        pMin.x = pMax.x;
+        pMax.x = temp;
+    }
+    if (pMin.y > pMax.y) {
+        float temp = pMin.y;
+        pMin.y = pMax.y;
+        pMax.y = temp;
+    }
+    if (pMin.z > pMax.z) {
+        float temp = pMin.z;
+        pMin.z = pMax.z;
+        pMax.z = temp;
+    }
+    return new Box(pMin, pMax);
+}
+
+
+
 final class Box implements IPrimitive {
-    PVector pMin;
-    PVector pMax;
-
-    // Color diffuseColor = new Color(1.0, 1.0, 1.0);
-
-    // Color getColor() {
-    //     return diffuseColor;
-    // }
+    final PVector pMin;
+    final PVector pMax;
+    final PVector centroid;
 
     Box(PVector pMin, PVector pMax) {
-        if (pMin.x > pMax.x) {
-            float temp = pMin.x;
-            pMin.x = pMax.x;
-            pMax.x = temp;
-        }
-        if (pMin.y > pMax.y) {
-            float temp = pMin.y;
-            pMin.y = pMax.y;
-            pMax.y = temp;
-        }
-        if (pMin.z > pMax.z) {
-            float temp = pMin.z;
-            pMin.z = pMax.z;
-            pMax.z = temp;
-        }
         this.pMin = pMin;
         this.pMax = pMax;
+        this.centroid = new PVector((pMin.x + pMax.x) / 2, (pMin.y + pMax.y) / 2, (pMin.z + pMax.z) / 2);
     }
 
-    boolean hasIntersection(Ray ray, float mint, float maxt) {
+    Box getBoundingBox() {
+        return this;
+    }
+
+
+
+    final boolean hasIntersection(Ray ray, float mint, float maxt) {
         float t0 = mint;
         float t1 = maxt;
 
@@ -118,9 +126,6 @@ final class Box implements IPrimitive {
             return null;
         }
 
-
-
-
         float tyMin = (pMin.y - ray.origin.y) / ray.direction.y;
         float tyMax = (pMax.y - ray.origin.y) / ray.direction.y;
         if (tyMin >= tyMax) {
@@ -194,7 +199,7 @@ final class Box implements IPrimitive {
             }
         }
         
-        return new PartialHit(pHit, normal, t0);
+        return new PartialHit(pHit, normal, t0, t1);
 
         // var resultColor = new Color(0.0, 0.0, 0.0);
         
@@ -230,5 +235,22 @@ final class Box implements IPrimitive {
 
     } 
 
+    void dump() {
+        println("Box: " + pMin + " " + pMax);
+    }
+
+
+
 
 }
+
+    Box union(Box b1, Box b2) {
+        Box result = new Box(b1.pMin, b1.pMax);
+        result.pMin.x = min(b1.pMin.x, b2.pMin.x);
+        result.pMin.y = min(b1.pMin.y, b2.pMin.y);
+        result.pMin.z = min(b1.pMin.z, b2.pMin.z);
+        result.pMax.x = max(b1.pMax.x, b2.pMax.x);
+        result.pMax.y = max(b1.pMax.y, b2.pMax.y);
+        result.pMax.z = max(b1.pMax.z, b2.pMax.z);
+        return result;
+    }

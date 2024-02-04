@@ -7,7 +7,19 @@ boolean debug_flag = false;
 
 ParsingState pState = ParsingState.GLOBAL;
 SceneGraph scene = new SceneGraph();
+int timer;  // global variable
 
+void reset_timer()
+{
+  timer = millis();
+}
+void print_timer()
+{
+  int new_timer = millis();
+  int diff = new_timer - timer;
+  float seconds = diff / 1000.0;
+  println ("timer = " + seconds);
+}
 void setup() {
     size(300, 300);
     noStroke();
@@ -99,20 +111,25 @@ void interpreter(String file) {
 
             var newMesh = new Mesh();
             
-            var surface = new Surface(sColor, newMesh);
+            var surface = new RenderableObject(sColor, newMesh);
             workingMesh = newMesh;
-            
+            // println(workingMesh);
+
+
+            // scene.surfaces.add(surface);
+            pState = ParsingState.SURFACE;
             scene.addObject(surface);
 
         } else if (token[0].equals("begin")) {
-            if (pState != ParsingState.GLOBAL) {
+            if (pState != ParsingState.SURFACE) {
                 println("Error: 'begin' without 'surface'");
             } else {
-                pState = ParsingState.TRIANGLE;
+                pState = ParsingState.SURFACE_DIRTY;
             }
         } else if (token[0].equals("vertex")) {
 
-            if (pState != ParsingState.TRIANGLE) {
+            if (pState != ParsingState.SURFACE_DIRTY) {
+                println(pState);
                 println("Error: 'vertex' without 'surface'");
             } else {
                 float x = float(token[1]);
@@ -126,12 +143,13 @@ void interpreter(String file) {
                 else {
                     workingMesh.addVertex(vertex);
                 }
+                pState = ParsingState.SURFACE_DIRTY;
             }
         } else if (token[0].equals("end")) {
-            if (pState != ParsingState.TRIANGLE) {
+            if (pState != ParsingState.SURFACE_DIRTY) {
                 println("Error: 'end' without 'surface'");
             } else {
-                pState = ParsingState.GLOBAL;
+                pState = ParsingState.SURFACE;
             }
         } else if (token[0].equals("render")) {
             draw_scene();   // this is where you should perform the scene rendering
@@ -166,6 +184,8 @@ void interpreter(String file) {
         }
          // box  xmin ymin zmin  xmax ymax zmax
         else if (token[0].equals("box")) {
+
+
             float xmin = float(token[1]);
             float ymin = float(token[2]);
             float zmin = float(token[3]);
@@ -180,23 +200,29 @@ void interpreter(String file) {
                 transform.applyTo(new PVector(xmax, ymax, zmax))
             );
             
-            // Surface surface = new Surface(scene.getLatestObject()._color, box);
-            scene.updatePrimitiveOfLatestObject(box);
+            RenderableObject surface = new RenderableObject(scene.getLatestObject().getColor(), box);
+            scene.replaceLatestObject(
+                surface
+            );
+            pState = ParsingState.SURFACE_DIRTY;
             
         } 
         else if (token[0].equals("named_object")) {
             String name = token[1];
             scene.moveLatestObjectToLibraryWithName(name);
+            pState = ParsingState.SURFACE_DIRTY;
         }
         else if (token[0].equals("instance")) {
             String name = token[1];
             scene.instantiate(name);
+            pState = ParsingState.SURFACE_DIRTY;
         }
         else if (token[0].equals("begin_accel")) {
 
 
         } else if (token[0].equals("end_accel")) {
-
+            var latestObject = scene.getLatestObject();
+            latestObject.accelerate();
         }
         else if (token[0].equals("push")) {
             scene.push();
@@ -218,8 +244,7 @@ void reset_scene() {
 
 // This is where you should put your code for creating eye rays and tracing them.
 void draw_scene() {
-    int timer = millis();
-    println("\n\n============ Rendering ........ ============ ");
+    reset_timer();
     PVector eye = new PVector(0, 0, 0);
 
     float widthFloat = (float) width;
@@ -236,8 +261,8 @@ void draw_scene() {
             // Have your routines (like ray/triangle intersection)
             // print information when this flag is set.
             debug_flag = false;
-            if (x == 80 && y == 81)
-                debug_flag = true;
+            // if (x == 164 && y == 141)
+            //     debug_flag = true;
             // if (x == 112 && y == 112)
             //     debug_flag = true;
             // if (x == 148 && y == 60)
@@ -284,12 +309,7 @@ void draw_scene() {
             }
         }
     }
-    println("============ Rendering finished ============ ");
-    
-    int new_timer = millis();
-    int diff = new_timer - timer;
-    float seconds = diff / 1000.0;
-    println ("timer = " + seconds);
+    print_timer();
 }
 
 // prints mouse location clicks, for help in debugging

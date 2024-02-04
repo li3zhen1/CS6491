@@ -1,3 +1,3 @@
 enum ParsingState {
-    GLOBAL, SURFACE, TRIANGLE
+    GLOBAL, SURFACE, SURFACE_DIRTY
 }

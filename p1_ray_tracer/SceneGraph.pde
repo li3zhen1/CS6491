@@ -2,31 +2,27 @@ final class SceneGraph {
 
     float fov;
     Color background;
-    ArrayList<Light> lights;
-    // ArrayList<Surface> surfaces;
+    final ArrayList<Light> lights;
+    final ArrayList<RenderableObject> surfaces;
 
-    final HashMap<String, Surface> objectLibrary;
+    final HashMap<String, RenderableObject> objectLibrary;
     
     final ArrayList<
-        Surface
+        RenderableObject
     > secneObjectInstances;
 
-    final Surface getLatestObject() {
+    RenderableObject getLatestObject() {
         return secneObjectInstances.get(secneObjectInstances.size() - 1);
     }
 
-    // <T extends IRenderableObject>
-    final void replaceLatestObject(Surface object) {
+    void replaceLatestObject(RenderableObject object) {
         secneObjectInstances.set(
             secneObjectInstances.size() - 1,
             object
         );
     }
 
-    final void updatePrimitiveOfLatestObject(IPrimitive primitive) {
-        var object = secneObjectInstances.get(secneObjectInstances.size() - 1);
-        object.primitive = primitive;
-    }
+    final ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
 
     final ArrayList<Mat4x4> transform = new ArrayList<Mat4x4>();
 
@@ -38,13 +34,24 @@ final class SceneGraph {
 
     final void instantiate(String name) {
         var object = objectLibrary.get(name);
-        
-        secneObjectInstances.add(
-            new InstancedSurface(
-                object,
-                getCurrentTransformCopy()
-            )
-        );
+        if (pState == ParsingState.SURFACE) {
+            secneObjectInstances.add(
+                new InstancedObject(
+                    object,
+                    getCurrentTransformCopy(),
+                    getLatestObject()._color
+                )
+            );
+        }
+        else {
+
+            secneObjectInstances.add(
+                new InstancedObject(
+                    object,
+                    getCurrentTransformCopy()
+                )
+            );
+        }
     }
 
 
@@ -52,10 +59,10 @@ final class SceneGraph {
         this.fov = 0;
         this.background = new Color(0, 0, 0);
         this.lights = new ArrayList<Light>();
-        // this.surfaces = new ArrayList<Surface>();
+        this.surfaces = new ArrayList<RenderableObject>();
 
-        this.objectLibrary = new HashMap<String, Surface>();
-        this.secneObjectInstances = new ArrayList<Surface>();
+        this.objectLibrary = new HashMap<String, RenderableObject>();
+        this.secneObjectInstances = new ArrayList<RenderableObject>();
 
         this.transform.add(identityMat4x4());
     }
@@ -78,7 +85,8 @@ final class SceneGraph {
         this.transform.remove(this.transform.size() - 1);
     }
 
-    final void addObject(Surface object) {
+    // <T extends IRenderableObject> 
+    void addObject(RenderableObject object) {
         secneObjectInstances.add(
             object
         );
@@ -134,6 +142,11 @@ final class SceneGraph {
         for (int i = 0; i < lights.size(); i++) {
             Light light = lights.get(i);
             println("    light: " + light.position.x + " " + light.position.y + " " + light.position.z + " " + light._color.r + " " + light._color.g + " " + light._color.b);
+        }
+        println("  surfaces: " + surfaces.size());
+        for (int i = 0; i < surfaces.size(); i++) {
+            RenderableObject surface = surfaces.get(i);
+            println("    surface: " + surface._color.r + " " + surface._color.g + " " + surface._color.b);
         }
     }
 
