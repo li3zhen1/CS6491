@@ -103,7 +103,7 @@ final class InstancedObject extends RenderableObject {
         }
         this.invertedTransform = pMat;
 
-        invertedTransform.print();
+        // invertedTransform.print();
     }
 
     public InstancedObject(
@@ -119,7 +119,7 @@ final class InstancedObject extends RenderableObject {
         }
         this.invertedTransform = pMat;
 
-        invertedTransform.print();
+        // invertedTransform.print();
     }
 }
 
