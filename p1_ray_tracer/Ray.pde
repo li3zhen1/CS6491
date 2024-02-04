@@ -12,7 +12,7 @@ final class Ray {
 
 
     // // Check if the ray intersects with the surface, and return the hit point
-    // final Hit intersect(Surface surface, int excludingTriangleIndex) {
+    // final Hit intersect(RenderableObject surface, int excludingTriangleIndex) {
 
     //     Pair<PVector, PVector> result = null;
 
@@ -48,7 +48,7 @@ final class Ray {
 
     // // Check if the ray intersects with the surface, and return the hit point
     // // checks shadow intersection
-    // public Hit intersectWithShadow(Surface surface, SceneGraph sceneGraphRef) {
+    // public Hit intersectWithShadow(RenderableObject surface, SceneGraph sceneGraphRef) {
 
     //     var lights = sceneGraphRef.lights;
     //     var surfaces = sceneGraphRef.surfaces;
@@ -125,7 +125,7 @@ final class Ray {
 
 
 
-    // private Pair<PVector, PVector> _intersect(Surface surface, int triangleIndex) {
+    // private Pair<PVector, PVector> _intersect(RenderableObject surface, int triangleIndex) {
     //     var tri = surface.mesh.getTriangleCopy(triangleIndex);
     //     var v1 = tri[0];
     //     var v2 = tri[1];

@@ -1,4 +1,6 @@
 
+
+
 final class Triangle implements IPrimitive {
     PVector v1;
     PVector v2;
@@ -9,8 +11,6 @@ final class Triangle implements IPrimitive {
         this.v2 = v2;
         this.v3 = v3;
     }
-
-
 
     PartialHit _getIntersection(Ray ray, SceneGraph sg) {
         float closestHitT = Float.MAX_VALUE;

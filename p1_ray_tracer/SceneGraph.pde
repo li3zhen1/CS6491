@@ -3,19 +3,19 @@ final class SceneGraph {
     float fov;
     Color background;
     final ArrayList<Light> lights;
-    final ArrayList<Surface> surfaces;
+    final ArrayList<RenderableObject> surfaces;
 
-    final HashMap<String, Surface> objectLibrary;
+    final HashMap<String, RenderableObject> objectLibrary;
     
     final ArrayList<
-        Surface
+        RenderableObject
     > secneObjectInstances;
 
-    Surface getLatestObject() {
+    RenderableObject getLatestObject() {
         return secneObjectInstances.get(secneObjectInstances.size() - 1);
     }
 
-    void replaceLatestObject(Surface object) {
+    void replaceLatestObject(RenderableObject object) {
         secneObjectInstances.set(
             secneObjectInstances.size() - 1,
             object
@@ -33,7 +33,7 @@ final class SceneGraph {
     void instantiate(String name) {
         var object = objectLibrary.get(name);
         secneObjectInstances.add(
-            new InstancedSurface(
+            new InstancedObject(
                 object,
                 getCurrentTransformCopy()
             )
@@ -45,10 +45,10 @@ final class SceneGraph {
         this.fov = 0;
         this.background = new Color(0, 0, 0);
         this.lights = new ArrayList<Light>();
-        this.surfaces = new ArrayList<Surface>();
+        this.surfaces = new ArrayList<RenderableObject>();
 
-        this.objectLibrary = new HashMap<String, Surface>();
-        this.secneObjectInstances = new ArrayList<Surface>();
+        this.objectLibrary = new HashMap<String, RenderableObject>();
+        this.secneObjectInstances = new ArrayList<RenderableObject>();
 
         this.transform.add(identityMat4x4());
     }
@@ -72,7 +72,7 @@ final class SceneGraph {
     }
 
     // <T extends IRenderableObject> 
-    void addObject(Surface object) {
+    void addObject(RenderableObject object) {
         secneObjectInstances.add(
             // new Pair<Mat4x4, T>(
                 // getCurrentTransformCopy(),
@@ -135,7 +135,7 @@ final class SceneGraph {
         }
         println("  surfaces: " + surfaces.size());
         for (int i = 0; i < surfaces.size(); i++) {
-            Surface surface = surfaces.get(i);
+            RenderableObject surface = surfaces.get(i);
             println("    surface: " + surface._color.r + " " + surface._color.g + " " + surface._color.b);
         }
     }

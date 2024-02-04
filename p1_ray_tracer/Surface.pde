@@ -1,14 +1,14 @@
 
 
 
-class Surface {
+class RenderableObject {
     Color _color;
 
     boolean accelerated = false;
     
     IPrimitive primitive;
 
-    Surface(Color _color, IPrimitive primitive) {
+    RenderableObject(Color _color, IPrimitive primitive) {
         this._color = _color;
         this.primitive = primitive;
     }

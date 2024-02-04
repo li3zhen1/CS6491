@@ -99,7 +99,7 @@ void interpreter(String file) {
 
             var newMesh = new Mesh();
             
-            var surface = new Surface(sColor, newMesh);
+            var surface = new RenderableObject(sColor, newMesh);
             workingMesh = newMesh;
             // println(workingMesh);
 
@@ -183,7 +183,7 @@ void interpreter(String file) {
                 transform.applyTo(new PVector(xmax, ymax, zmax))
             );
             
-            Surface surface = new Surface(scene.getLatestObject().getColor(), box);
+            RenderableObject surface = new RenderableObject(scene.getLatestObject().getColor(), box);
             scene.replaceLatestObject(
                 surface
             );

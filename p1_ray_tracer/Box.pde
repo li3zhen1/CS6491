@@ -1,34 +1,34 @@
-final class Box implements IPrimitive {
-    PVector pMin;
-    PVector pMax;
-
-    Color diffuseColor = new Color(1.0, 1.0, 1.0);
-
-    Color getColor() {
-        return diffuseColor;
+Box createBoxChecked(PVector pMin, PVector pMax) {
+    if (pMin.x > pMax.x) {
+        float temp = pMin.x;
+        pMin.x = pMax.x;
+        pMax.x = temp;
     }
+    if (pMin.y > pMax.y) {
+        float temp = pMin.y;
+        pMin.y = pMax.y;
+        pMax.y = temp;
+    }
+    if (pMin.z > pMax.z) {
+        float temp = pMin.z;
+        pMin.z = pMax.z;
+        pMax.z = temp;
+    }
+    return new Box(pMin, pMax);
+}
+
+final class Box implements IPrimitive {
+    final PVector pMin;
+    final PVector pMax;
+    final PVector centroid;
 
     Box(PVector pMin, PVector pMax) {
-        if (pMin.x > pMax.x) {
-            float temp = pMin.x;
-            pMin.x = pMax.x;
-            pMax.x = temp;
-        }
-        if (pMin.y > pMax.y) {
-            float temp = pMin.y;
-            pMin.y = pMax.y;
-            pMax.y = temp;
-        }
-        if (pMin.z > pMax.z) {
-            float temp = pMin.z;
-            pMin.z = pMax.z;
-            pMax.z = temp;
-        }
         this.pMin = pMin;
         this.pMax = pMax;
+        this.centroid = new PVector((pMin.x + pMax.x) / 2, (pMin.y + pMax.y) / 2, (pMin.z + pMax.z) / 2);
     }
 
-    boolean hasIntersection(Ray ray, float mint, float maxt) {
+    final boolean hasIntersection(Ray ray, float mint, float maxt) {
         float t0 = mint;
         float t1 = maxt;
 
@@ -117,9 +117,6 @@ final class Box implements IPrimitive {
         if (t0 > t1 + EPSILON) {
             return null;
         }
-
-
-
 
         float tyMin = (pMin.y - ray.origin.y) / ray.direction.y;
         float tyMax = (pMax.y - ray.origin.y) / ray.direction.y;

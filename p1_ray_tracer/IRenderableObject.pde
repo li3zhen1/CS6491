@@ -12,7 +12,7 @@ public interface IRenderableObject {
 }
 
 
-final class InstancedSurface extends Surface {
+final class InstancedObject extends RenderableObject {
 
     final PMatrix3D transform;
     final PMatrix3D invertedTransform;
@@ -86,7 +86,7 @@ final class InstancedSurface extends Surface {
     }
 
 
-    public InstancedSurface(Surface namedObject, Mat4x4 transform) {
+    public InstancedObject(RenderableObject namedObject, Mat4x4 transform) {
         super(namedObject._color, namedObject.primitive);
         this.transform = transform.toPMatrix3D();
         // this.diffuseColor = namedObject.getColor();
